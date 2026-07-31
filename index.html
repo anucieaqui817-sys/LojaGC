@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galego Cell — Loja &amp; Gestão</title>
+  <link rel="icon" type="image/png" href="logo.png">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -120,16 +121,16 @@
     <div class="min-h-[76px] flex items-center justify-between gap-4">
      <button id="brand-button" type="button" class="flex items-center gap-3 text-left" aria-label="Ir para a loja">
       <div class="logo-shell glow-ring w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-black">
-       <i data-lucide="smartphone" class="w-6 h-6 text-[#f4d35e]"></i>
+       <img src="logo.png" alt="Galego Cell" class="w-full h-full object-contain p-1">
       </div>
       <div>
-       <p class="font-bold leading-tight text-[#fff1a8]">Galego Cell</p>
-       <p class="mt-0.5 text-xs text-[#c9bd94]">Loja &amp; Assistência Técnica</p>
+       <p class="font-bold leading-tight text-[#fff1a8]">GALEGO CELL</p>
+       <p class="mt-0.5 text-xs text-[#c9bd94]">Tecnologia com presença</p>
       </div>
      </button>
      <nav aria-label="Navegação principal" class="flex items-center gap-2">
       <button type="button" data-view-target="store" class="tab-button rounded-lg px-3 sm:px-4 py-2 font-bold text-[#f4d35e]">Loja</button>
-      <button type="button" data-view-target="admin" class="tab-button rounded-lg px-3 sm:px-4 py-2 font-bold text-[#f4d35e]">Gestão</button>
+      <button type="button" data-view-target="admin" class="tab-button rounded-lg px-3 sm:px-4 py-2 font-bold text-[#f4d35e]">Painel</button>
      </nav>
     </div>
    </div>
@@ -137,6 +138,7 @@
   <main>
    <section id="store-view" class="view active" aria-label="Loja virtual">
     <section class="hero-shade relative overflow-hidden bg-[#080807]">
+     <img src="https://images.pexels.com/photos/17330220/pexels-photo-17330220.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" class="absolute inset-0 w-full h-full object-cover">
      <div class="gold-grid absolute inset-0 z-10"></div>
      <div class="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
       <div class="max-w-2xl">
@@ -145,14 +147,14 @@
        </div>
        <div class="flex items-center gap-4 mb-6">
         <div class="logo-shell rounded-2xl overflow-hidden bg-black/50 glow-ring w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
-         <i data-lucide="smartphone" class="w-10 h-10 text-[#f4d35e]"></i>
+         <img src="logo.png" alt="Galego Cell" class="w-full h-full object-contain p-2">
         </div>
         <div class="h-px flex-1 max-w-36 bg-gradient-to-r from-[#f4d35e] to-transparent"></div>
        </div>
-       <h1 class="font-bold tracking-tight leading-[.98] max-w-xl text-white text-4xl sm:text-5xl">Galego Cell</h1>
-       <p class="mt-5 max-w-xl text-[#d8cfae]">Celulares, acessórios e assistência técnica em Natal. Atendimento rápido, preços justos e suporte direto pelo WhatsApp.</p>
-       <button id="hero-whatsapp" type="button" class="gold-button mt-8 inline-flex items-center gap-2 rounded-xl px-5 py-3.5 font-bold bg-[#f4d35e] text-[#241a06]">
-        <i data-lucide="message-circle" class="w-5 h-5"></i> <span>Falar no WhatsApp</span>
+       <h1 class="font-bold tracking-tight leading-[.98] max-w-xl text-white text-4xl sm:text-5xl">Sua tecnologia merece brilho próprio.</h1>
+       <p class="mt-5 max-w-xl text-[#d8cfae]">Celulares, acessórios e assistência técnica com atendimento rápido, confiança e o padrão premium da Galego Cell.</p>
+       <button id="hero-whatsapp" type="button" aria-label="Falar no WhatsApp" class="gold-button mt-8 inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#f4d35e] text-[#241a06]">
+        <i data-lucide="message-circle" class="w-6 h-6"></i>
        </button>
       </div>
      </div>
@@ -160,8 +162,8 @@
     <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-10">
      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-7">
       <div>
-       <p class="mono font-bold uppercase tracking-[.18em] text-[#b88718]">CATÁLOGO</p>
-       <h2 class="font-bold mt-2 text-2xl sm:text-3xl text-[#211b0f]">Nossos Produtos</h2>
+       <p class="mono font-bold uppercase tracking-[.18em] text-[#b88718]">CATÁLOGO ONLINE</p>
+       <h2 class="font-bold mt-2 text-2xl sm:text-3xl text-[#211b0f]">Encontre seu próximo upgrade</h2>
       </div>
       <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
        <div class="relative">
@@ -359,7 +361,7 @@
    <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-8 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="auth-title">
     <div class="text-center mb-8">
      <div class="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4 bg-black flex items-center justify-center">
-      <i data-lucide="lock" class="w-7 h-7 text-[#f4d35e]"></i>
+      <img src="logo.png" alt="Galego Cell" class="w-full h-full object-contain p-2">
      </div>
      <h1 id="auth-title" class="font-bold text-xl text-[#211b0f]">Área Restrita</h1>
      <p class="mt-2 text-sm text-[#786d55]">Entre com seu e-mail e senha de administrador.</p>
