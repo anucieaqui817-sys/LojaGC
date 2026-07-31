@@ -1,21 +1,18 @@
 <!doctype html>
 <html lang="pt-BR">
  <head>
-  <script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260730-05-6814160","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Broken Glyph":"YADZ-exUkv0,0","Canva Sans":"YAFdJjTk5UU,0","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Ghost Mono":"YAHO2EIdDP0,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YADy3sAhvXQ,0","Oleo Script":"YACgEQQ14jI,0","Playfair Display":"YAFdJhem5V8,1","Poppins":"YAE5fPSY9qM,0","Press Start 2P":"YAFyGr-8pmQ,0","Source Sans 3":"YAG4lO1Mj10,0","Space Grotesk":"YAHO2sjPCSM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0"}}');</script>
-  <script src="/_sdk/a27874207e105461.telemetry_sdk.js" integrity="sha512-wgI5N9F7oA2h3vH+benMYIv4wGqTct4nKWakqgvfgRyBLmfYq8q/fi6gkfWKd2hMsyN+VQ/qOAOpxybwkcoxlA=="></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galego Cell — Loja &amp; Gestão</title>
-  
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  
-  <!-- Firebase Compat SDKs Oficiais -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <!-- Firebase (substitui o data_sdk.js proprietário do Canva) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
   <style>
     :root {
       --void: #080807;
@@ -116,63 +113,83 @@
       background: radial-gradient(circle at 50% 35%, rgba(255,241,168,.24), transparent 62%);
     }
   </style>
-  <script src="/_sdk/6030e540d4419216.resizing_sdk.js" integrity="sha512-b5KWzyoXsbWP4smq4sftIi6Kts4YVBpBsz0BwCViwbBJkK64a3/Z6ZMdWA+qnplNcXw4mhZeqvQi3mOosiRJdA=="></script>
  </head>
- <body data-template-id="__page-root" class="w-full min-h-screen">
+ <body class="w-full min-h-screen">
   <header class="sticky top-0 z-30 border-b border-[#d69b25]/20 bg-[#080807]/95 backdrop-blur">
    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="min-h-[76px] flex items-center justify-between gap-4"><button id="brand-button" type="button" class="flex items-center gap-3 text-left" aria-label="Ir para a loja">
-      <div class="logo-shell glow-ring w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-black"><img data-template-id="brand-logo" loading="lazy" class="canva-image w-full h-full object-contain p-1">
+    <div class="min-h-[76px] flex items-center justify-between gap-4">
+     <button id="brand-button" type="button" class="flex items-center gap-3 text-left" aria-label="Ir para a loja">
+      <div class="logo-shell glow-ring w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-black">
+       <i data-lucide="smartphone" class="w-6 h-6 text-[#f4d35e]"></i>
       </div>
       <div>
-       <p data-template-id="brand-name" class="canva-text font-bold leading-tight"></p>
-       <p data-template-id="brand-tagline" class="canva-text mt-0.5"></p>
-      </div></button>
-     <nav aria-label="Navegação principal" class="flex items-center gap-2"><button type="button" data-view-target="store" data-template-id="store-nav-button" class="canva-button tab-button rounded-lg px-3 sm:px-4 py-2 font-bold"></button> <button type="button" data-view-target="admin" data-template-id="admin-nav-button" class="canva-button tab-button rounded-lg px-3 sm:px-4 py-2 font-bold"></button>
+       <p class="font-bold leading-tight text-[#fff1a8]">Galego Cell</p>
+       <p class="mt-0.5 text-xs text-[#c9bd94]">Loja &amp; Assistência Técnica</p>
+      </div>
+     </button>
+     <nav aria-label="Navegação principal" class="flex items-center gap-2">
+      <button type="button" data-view-target="store" class="tab-button rounded-lg px-3 sm:px-4 py-2 font-bold text-[#f4d35e]">Loja</button>
+      <button type="button" data-view-target="admin" class="tab-button rounded-lg px-3 sm:px-4 py-2 font-bold text-[#f4d35e]">Gestão</button>
      </nav>
     </div>
    </div>
   </header>
   <main>
    <section id="store-view" class="view active" aria-label="Loja virtual">
-    <section class="hero-shade relative overflow-hidden bg-[#080807]"><img data-template-id="hero-image" loading="lazy" class="canva-image absolute inset-0 w-full h-full object-cover" alt="">
+    <section class="hero-shade relative overflow-hidden bg-[#080807]">
      <div class="gold-grid absolute inset-0 z-10"></div>
      <div class="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
       <div class="max-w-2xl">
-       <div data-template-id="hero-badge" class="canva-tag inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-bold mb-6"><i data-lucide="sparkles" class="w-4 h-4"></i> <span>TECNOLOGIA COM ESTILO</span>
+       <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-bold mb-6 bg-[#fff1a8]/10 text-[#fff1a8] border border-[#fff1a8]/30">
+        <i data-lucide="sparkles" class="w-4 h-4"></i> <span>TECNOLOGIA COM ESTILO</span>
        </div>
        <div class="flex items-center gap-4 mb-6">
-        <div class="logo-shell rounded-2xl overflow-hidden bg-black/50 glow-ring w-20 h-20 sm:w-24 sm:h-24"><img data-template-id="hero-logo" loading="lazy" class="canva-image w-full h-full object-contain p-1">
+        <div class="logo-shell rounded-2xl overflow-hidden bg-black/50 glow-ring w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
+         <i data-lucide="smartphone" class="w-10 h-10 text-[#f4d35e]"></i>
         </div>
         <div class="h-px flex-1 max-w-36 bg-gradient-to-r from-[#f4d35e] to-transparent"></div>
        </div>
-       <h1 data-template-id="hero-title" class="canva-text font-bold tracking-tight leading-[.98] max-w-xl"></h1>
-       <p data-template-id="hero-description" class="canva-text mt-5 max-w-xl"></p><button id="hero-whatsapp" type="button" data-template-id="hero-whatsapp-button" class="canva-button gold-button mt-8 inline-flex items-center gap-2 rounded-xl px-5 py-3.5 font-bold"> <i data-lucide="message-circle" class="w-5 h-5"></i> </button>
+       <h1 class="font-bold tracking-tight leading-[.98] max-w-xl text-white text-4xl sm:text-5xl">Galego Cell</h1>
+       <p class="mt-5 max-w-xl text-[#d8cfae]">Celulares, acessórios e assistência técnica em Natal. Atendimento rápido, preços justos e suporte direto pelo WhatsApp.</p>
+       <button id="hero-whatsapp" type="button" class="gold-button mt-8 inline-flex items-center gap-2 rounded-xl px-5 py-3.5 font-bold bg-[#f4d35e] text-[#241a06]">
+        <i data-lucide="message-circle" class="w-5 h-5"></i> <span>Falar no WhatsApp</span>
+       </button>
       </div>
      </div>
     </section>
     <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-10">
      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-7">
       <div>
-       <p data-template-id="catalog-eyebrow" class="canva-text mono font-bold uppercase tracking-[.18em]"></p>
-       <h2 data-template-id="catalog-title" class="canva-text font-bold mt-2"></h2>
+       <p class="mono font-bold uppercase tracking-[.18em] text-[#b88718]">CATÁLOGO</p>
+       <h2 class="font-bold mt-2 text-2xl sm:text-3xl text-[#211b0f]">Nossos Produtos</h2>
       </div>
       <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-       <div class="relative"><label class="sr-only" for="product-search">Pesquisar produtos</label> <i data-lucide="search" class="absolute left-3 top-3.5 w-4 h-4 text-stone-400"></i> <input id="product-search" type="search" placeholder="Buscar produto..." class="w-full sm:w-64 rounded-xl border border-[#d5c9a8] bg-white px-10 py-3 text-sm">
+       <div class="relative">
+        <label class="sr-only" for="product-search">Pesquisar produtos</label>
+        <i data-lucide="search" class="absolute left-3 top-3.5 w-4 h-4 text-stone-400"></i>
+        <input id="product-search" type="search" placeholder="Buscar produto..." class="w-full sm:w-64 rounded-xl border border-[#d5c9a8] bg-white px-10 py-3 text-sm">
        </div>
-       <div><label class="sr-only" for="category-filter">Filtrar por categoria</label> <select id="category-filter" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 text-sm font-semibold"> <option value="all">Todas as categorias</option> <option value="Celulares">Celulares</option> <option value="Acessórios">Acessórios</option> <option value="Assistência técnica">Assistência técnica</option> </select>
+       <div>
+        <label class="sr-only" for="category-filter">Filtrar por categoria</label>
+        <select id="category-filter" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 text-sm font-semibold">
+         <option value="all">Todas as categorias</option>
+         <option value="Celulares">Celulares</option>
+         <option value="Acessórios">Acessórios</option>
+         <option value="Assistência técnica">Assistência técnica</option>
+        </select>
        </div>
       </div>
      </div>
      <div id="store-products" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
-     <div id="store-empty" class="hidden rounded-2xl border border-dashed border-[#c9b887] bg-[#fffcf1] p-12 text-center"><i data-lucide="package-search" class="w-10 h-10 mx-auto text-[#b88718]"></i>
-      <p data-template-id="store-empty-text" class="canva-text font-semibold mt-4"></p>
+     <div id="store-empty" class="hidden rounded-2xl border border-dashed border-[#c9b887] bg-[#fffcf1] p-12 text-center">
+      <i data-lucide="package-search" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+      <p class="font-semibold mt-4 text-[#786d55]">Nenhum produto encontrado com esses filtros.</p>
      </div>
     </section>
     <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-10">
      <div class="rounded-2xl overflow-hidden bg-white border border-[#e3d7b5] shadow-sm">
       <div class="p-5 sm:p-6 border-b border-[#eadfbe]">
-       <h2 data-template-id="location-title" class="canva-text font-bold"></h2>
+       <h2 class="font-bold text-xl text-[#211b0f]">Onde Estamos</h2>
       </div>
       <div class="p-5 sm:p-6 grid md:grid-cols-2 gap-8">
        <div class="space-y-5">
@@ -181,8 +198,8 @@
           <i data-lucide="map-pin" class="w-5 h-5 text-[#f4d35e] flex-shrink-0 mt-0.5"></i>
           <div class="min-w-0">
            <p class="text-xs mono text-[#9c9072] font-bold">ENDEREÇO</p>
-           <p data-template-id="location-address" class="canva-text font-bold mt-1"></p>
-           <p data-template-id="location-district" class="canva-text text-sm mt-1"></p>
+           <p class="font-bold mt-1 text-[#211b0f]">Rua Tijuana, 19</p>
+           <p class="text-sm mt-1 text-[#786d55]">Lagoa Azul, Natal - RN, 59139-350</p>
           </div>
          </div>
         </article>
@@ -191,8 +208,8 @@
           <i data-lucide="clock" class="w-5 h-5 text-[#f4d35e] flex-shrink-0 mt-0.5"></i>
           <div class="min-w-0">
            <p class="text-xs mono text-[#9c9072] font-bold">HORÁRIO</p>
-           <p data-template-id="location-hours" class="canva-text font-bold mt-1"></p>
-           <p data-template-id="location-status" class="canva-text text-sm mt-1"></p>
+           <p class="font-bold mt-1 text-[#211b0f]">Seg, Ter, Sex: 8h–18h · Qua, Qui: 8h–20h · Sáb: 8h–16h</p>
+           <p class="text-sm mt-1 text-[#786d55]">Domingo: fechado</p>
           </div>
          </div>
         </article>
@@ -200,7 +217,8 @@
          <div class="flex items-start gap-3">
           <i data-lucide="phone" class="w-5 h-5 text-[#f4d35e] flex-shrink-0 mt-0.5"></i>
           <div class="min-w-0">
-           <p class="text-xs mono text-[#9c9072] font-bold">CONTATO</p><a href="tel:+558498716162" data-template-id="location-phone" class="canva-text font-bold mt-1 hover:text-[#d69b25] transition-colors"></a>
+           <p class="text-xs mono text-[#9c9072] font-bold">CONTATO</p>
+           <a href="tel:+5584987181612" class="font-bold mt-1 hover:text-[#d69b25] transition-colors text-[#211b0f] block">(84) 98718-1612</a>
           </div>
          </div>
         </article>
@@ -209,14 +227,19 @@
           <i data-lucide="star" class="w-5 h-5 text-[#f4d35e] flex-shrink-0 mt-0.5"></i>
           <div class="min-w-0">
            <p class="text-xs mono text-[#9c9072] font-bold">AVALIAÇÃO</p>
-           <p data-template-id="location-rating" class="canva-text font-bold mt-1"></p>
-           <p data-template-id="location-reviews" class="canva-text text-sm mt-1"></p>
+           <p class="font-bold mt-1 text-[#211b0f]">5.0 de 5</p>
+           <p class="text-sm mt-1 text-[#786d55]">14 avaliações no Google</p>
           </div>
          </div>
         </article>
        </div>
        <div class="relative">
-        <a id="maps-link" href="https://maps.google.com/?q=Rua+Tijuana,+19+-+Lagoa,+Natal,+RN" target="_blank" rel="noopener noreferrer" class="block rounded-xl overflow-hidden border border-[#d5c9a8] hover:border-[#d69b25] transition-colors h-full"> <img data-template-id="location-map-image" loading="lazy" class="canva-image w-full h-full object-cover" alt="Localização da Galego Cell no Google Maps"> </a> <button type="button" id="open-maps" class="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-lg bg-[#fff1a8] px-4 py-2 text-sm font-bold text-[#241a06] hover:bg-[#e3bb3e] transition-colors shadow-lg"><i data-lucide="map" class="w-4 h-4"></i> Ver no Google Maps </button>
+        <a id="maps-link" href="https://maps.google.com/?q=Rua+Tijuana,+19+-+Lagoa+Azul,+Natal,+RN" target="_blank" rel="noopener noreferrer" class="block rounded-xl overflow-hidden border border-[#d5c9a8] hover:border-[#d69b25] transition-colors h-full min-h-[220px]">
+         <iframe title="Localização da Galego Cell no Google Maps" class="w-full h-full min-h-[220px]" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Rua+Tijuana,+19+-+Lagoa+Azul,+Natal,+RN&output=embed"></iframe>
+        </a>
+        <button type="button" id="open-maps" class="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-lg bg-[#fff1a8] px-4 py-2 text-sm font-bold text-[#241a06] hover:bg-[#e3bb3e] transition-colors shadow-lg">
+         <i data-lucide="map" class="w-4 h-4"></i> Ver no Google Maps
+        </button>
        </div>
       </div>
      </div>
@@ -226,92 +249,107 @@
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
      <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-8">
       <div>
-       <p data-template-id="admin-eyebrow" class="canva-text mono font-bold uppercase tracking-[.18em]"></p>
-       <h1 data-template-id="admin-title" class="canva-text font-bold mt-2"></h1>
-       <p data-template-id="admin-description" class="canva-text mt-2"></p>
-      </div><button id="new-product-button" type="button" data-template-id="new-product-button-text" class="canva-button gold-button inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold"> <i data-lucide="plus" class="w-5 h-5"></i> </button>
+       <p class="mono font-bold uppercase tracking-[.18em] text-[#b88718]">PAINEL INTERNO</p>
+       <h1 class="font-bold mt-2 text-2xl sm:text-3xl text-[#211b0f]">Gestão da Loja</h1>
+       <p class="mt-2 text-[#786d55]">Cadastre produtos, controle estoque e acompanhe vendas.</p>
+      </div>
+      <button id="new-product-button" type="button" class="gold-button inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold bg-[#f4d35e] text-[#241a06]">
+       <i data-lucide="plus" class="w-5 h-5"></i> <span>Novo Produto</span>
+      </button>
      </div>
      <section aria-label="Resumo financeiro" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
-      <article data-template-id="metric-sales-card" class="canva-card rounded-2xl p-5">
-       <div class="flex justify-between items-start"><i data-lucide="trending-up" class="w-5 h-5 text-[#f4d35e]"></i> <span class="mono text-xs text-[#a99d7f]">VENDAS</span>
-       </div>
+      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+       <div class="flex justify-between items-start"><i data-lucide="trending-up" class="w-5 h-5 text-[#f4d35e]"></i> <span class="mono text-xs text-[#a99d7f]">VENDAS</span></div>
        <p id="metric-revenue" class="mono mt-6 text-2xl font-bold">R$ 0,00</p>
-       <p data-template-id="metric-sales-label" class="canva-text mt-2"></p>
+       <p class="mt-2 text-sm text-[#786d55]">Receita total</p>
       </article>
-      <article data-template-id="metric-cost-card" class="canva-card rounded-2xl p-5">
-       <div class="flex justify-between items-start"><i data-lucide="wallet-cards" class="w-5 h-5 text-[#b88718]"></i> <span class="mono text-xs text-[#82785f]">CUSTO</span>
-       </div>
+      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+       <div class="flex justify-between items-start"><i data-lucide="wallet-cards" class="w-5 h-5 text-[#b88718]"></i> <span class="mono text-xs text-[#82785f]">CUSTO</span></div>
        <p id="metric-cost" class="mono mt-6 text-2xl font-bold">R$ 0,00</p>
-       <p data-template-id="metric-cost-label" class="canva-text mt-2"></p>
+       <p class="mt-2 text-sm text-[#786d55]">Valor em estoque</p>
       </article>
-      <article data-template-id="metric-stock-card" class="canva-card rounded-2xl p-5">
-       <div class="flex justify-between items-start"><i data-lucide="boxes" class="w-5 h-5 text-[#8d6512]"></i> <span class="mono text-xs text-[#82785f]">ESTOQUE</span>
-       </div>
+      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+       <div class="flex justify-between items-start"><i data-lucide="boxes" class="w-5 h-5 text-[#8d6512]"></i> <span class="mono text-xs text-[#82785f]">ESTOQUE</span></div>
        <p id="metric-stock" class="mono mt-6 text-2xl font-bold">0</p>
-       <p data-template-id="metric-stock-label" class="canva-text mt-2"></p>
+       <p class="mt-2 text-sm text-[#786d55]">Unidades em estoque</p>
       </article>
-      <article data-template-id="metric-units-card" class="canva-card rounded-2xl p-5">
-       <div class="flex justify-between items-start"><i data-lucide="shopping-bag" class="w-5 h-5 text-[#9a6d10]"></i> <span class="mono text-xs text-[#82785f]">SAÍDAS</span>
-       </div>
+      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+       <div class="flex justify-between items-start"><i data-lucide="shopping-bag" class="w-5 h-5 text-[#9a6d10]"></i> <span class="mono text-xs text-[#82785f]">SAÍDAS</span></div>
        <p id="metric-units" class="mono mt-6 text-2xl font-bold">0</p>
-       <p data-template-id="metric-units-label" class="canva-text mt-2"></p>
+       <p class="mt-2 text-sm text-[#786d55]">Unidades vendidas</p>
       </article>
      </section>
      <section id="product-form-panel" class="hidden rounded-2xl bg-[#15130d] p-5 sm:p-7 mb-8 shadow-2xl">
       <div class="flex items-center justify-between gap-4 mb-6">
        <div>
-        <h2 data-template-id="form-title" class="canva-text font-bold"></h2>
-        <p data-template-id="form-helper" class="canva-text mt-1"></p>
-       </div><button id="close-form-button" type="button" class="p-2 rounded-lg text-[#f4d35e] hover:bg-white/10" aria-label="Fechar cadastro"> <i data-lucide="x"></i> </button>
-      </div>
-      <form id="product-form"><input id="editing-id" type="hidden">
-       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div><label data-template-id="label-product-name" class="canva-text block font-bold mb-2" for="product-name"></label> <input id="product-name" required maxlength="80" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
-        </div>
-        <div><label data-template-id="label-category" class="canva-text block font-bold mb-2" for="product-category"></label> <select id="product-category" required class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"> <option value="Celulares">Celulares</option> <option value="Acessórios">Acessórios</option> <option value="Assistência técnica">Assistência técnica</option> </select>
-        </div>
-        <div><label data-template-id="label-stock" class="canva-text block font-bold mb-2" for="product-stock"></label> <input id="product-stock" required min="0" step="1" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
-        </div>
-        <div><label data-template-id="label-price" class="canva-text block font-bold mb-2" for="product-price"></label> <input id="product-price" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
-        </div>
-        <div><label data-template-id="label-cost" class="canva-text block font-bold mb-2" for="product-cost"></label> <input id="product-cost" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
-        </div>
-        <div><label data-template-id="label-image-url" class="canva-text block font-bold mb-2" for="product-image-url"></label> <input id="product-image-url" maxlength="300" type="url" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
-        </div>
-        <div class="md:col-span-2 lg:col-span-3"><label data-template-id="label-description" class="canva-text block font-bold mb-2" for="product-description"></label> <textarea id="product-description" required maxlength="240" rows="3" class="w-full resize-none rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></textarea>
-        </div>
+        <h2 class="font-bold text-[#fff1a8]">Cadastrar / Editar Produto</h2>
+        <p class="mt-1 text-sm text-[#c9bd94]">Preencha os dados do produto abaixo.</p>
        </div>
-       <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6"><button id="cancel-form-button" type="button" data-template-id="cancel-form-button" class="canva-button rounded-xl px-5 py-3 font-bold"></button> <button id="save-product-button" type="submit" data-template-id="save-product-button" class="canva-button gold-button rounded-xl px-5 py-3 font-bold"></button>
+       <button id="close-form-button" type="button" class="p-2 rounded-lg text-[#f4d35e] hover:bg-white/10" aria-label="Fechar cadastro"><i data-lucide="x"></i></button>
+      </div>
+      <form id="product-form">
+       <input id="editing-id" type="hidden">
+       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-name">Nome do produto</label>
+         <input id="product-name" required maxlength="80" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-category">Categoria</label>
+         <select id="product-category" required class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
+          <option value="Celulares">Celulares</option>
+          <option value="Acessórios">Acessórios</option>
+          <option value="Assistência técnica">Assistência técnica</option>
+         </select></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-stock">Estoque</label>
+         <input id="product-stock" required min="0" step="1" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-price">Preço de venda (R$)</label>
+         <input id="product-price" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-cost">Preço de custo (R$)</label>
+         <input id="product-cost" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-image-url">URL da imagem (opcional)</label>
+         <input id="product-image-url" maxlength="300" type="url" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div class="md:col-span-2 lg:col-span-3"><label class="block font-bold mb-2 text-[#fff1a8]" for="product-description">Descrição</label>
+         <textarea id="product-description" required maxlength="240" rows="3" class="w-full resize-none rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></textarea></div>
+       </div>
+       <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6">
+        <button id="cancel-form-button" type="button" class="rounded-xl px-5 py-3 font-bold border border-[#5d522f] text-[#fff1a8]">Cancelar</button>
+        <button id="save-product-button" type="submit" class="gold-button rounded-xl px-5 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Salvar Produto</button>
        </div>
       </form>
      </section>
      <section class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm">
       <div class="p-5 sm:p-6 border-b border-[#eadfbe] flex items-center justify-between gap-4">
        <div>
-        <h2 data-template-id="inventory-title" class="canva-text font-bold"></h2>
-        <p data-template-id="inventory-helper" class="canva-text mt-1"></p>
-       </div><span id="inventory-count" class="mono text-xs rounded-full bg-[#fff4c7] px-3 py-1.5 text-[#75500b]">0 ITENS</span>
+        <h2 class="font-bold text-[#211b0f]">Estoque Atual</h2>
+        <p class="mt-1 text-sm text-[#786d55]">Todos os produtos cadastrados</p>
+       </div>
+       <span id="inventory-count" class="mono text-xs rounded-full bg-[#fff4c7] px-3 py-1.5 text-[#75500b]">0 ITENS</span>
       </div>
       <div id="admin-products" class="divide-y divide-[#f0e8d2]"></div>
-      <div id="admin-empty" class="p-12 text-center"><i data-lucide="package-plus" class="w-10 h-10 mx-auto text-[#b88718]"></i>
-       <p data-template-id="admin-empty-text" class="canva-text font-semibold mt-4"></p>
+      <div id="admin-empty" class="p-12 text-center">
+       <i data-lucide="package-plus" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+       <p class="font-semibold mt-4 text-[#786d55]">Nenhum produto cadastrado ainda.</p>
       </div>
      </section>
     </div>
    </section>
-  </main><button id="floating-whatsapp" type="button" data-template-id="floating-whatsapp" class="canva-button gold-button fixed z-40 right-5 bottom-5 w-14 h-14 rounded-full flex items-center justify-center shadow-xl" aria-label="Falar com a Galego Cell pelo WhatsApp"> <i data-lucide="message-circle" class="w-7 h-7"></i> </button>
+  </main>
+  <button id="floating-whatsapp" type="button" class="gold-button fixed z-40 right-5 bottom-5 w-14 h-14 rounded-full flex items-center justify-center shadow-xl bg-[#f4d35e] text-[#241a06]" aria-label="Falar com a Galego Cell pelo WhatsApp"><i data-lucide="message-circle" class="w-7 h-7"></i></button>
   <div id="sale-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
    <section class="w-full max-w-md rounded-2xl bg-[#fffdf5] p-6 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="sale-modal-title">
     <div class="flex justify-between gap-4">
      <div>
-      <p data-template-id="sale-modal-kicker" class="canva-text mono font-bold"></p>
-      <h2 id="sale-modal-title" data-template-id="sale-modal-title" class="canva-text font-bold mt-2"></h2>
-     </div><button id="close-sale-modal" type="button" class="p-2 h-fit rounded-lg hover:bg-[#f5eedb]" aria-label="Fechar"> <i data-lucide="x"></i> </button>
+      <p class="mono font-bold text-xs text-[#b88718]">REGISTRAR VENDA</p>
+      <h2 id="sale-modal-title" class="font-bold mt-2 text-xl text-[#211b0f]">Confirmar Venda</h2>
+     </div>
+     <button id="close-sale-modal" type="button" class="p-2 h-fit rounded-lg hover:bg-[#f5eedb]" aria-label="Fechar"><i data-lucide="x"></i></button>
     </div>
     <p id="sale-product-name" class="font-bold text-[#2b2414] mt-6"></p>
     <p id="sale-stock-info" class="text-sm text-[#81755a] mt-1"></p>
-    <form id="sale-form" class="mt-6"><label data-template-id="sale-quantity-label" class="canva-text block font-bold mb-2" for="sale-quantity"></label> <input id="sale-quantity" required min="1" step="1" type="number" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3">
-     <div class="flex gap-3 mt-6"><button id="cancel-sale-button" type="button" data-template-id="cancel-sale-button" class="canva-button flex-1 rounded-xl px-4 py-3 font-bold"></button> <button id="confirm-sale-button" type="submit" data-template-id="confirm-sale-button" class="canva-button gold-button flex-1 rounded-xl px-4 py-3 font-bold"></button>
+    <form id="sale-form" class="mt-6">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="sale-quantity">Quantidade vendida</label>
+     <input id="sale-quantity" required min="1" step="1" type="number" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3">
+     <div class="flex gap-3 mt-6">
+      <button id="cancel-sale-button" type="button" class="flex-1 rounded-xl px-4 py-3 font-bold border border-[#d5c9a8] text-[#211b0f]">Cancelar</button>
+      <button id="confirm-sale-button" type="submit" class="gold-button flex-1 rounded-xl px-4 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Confirmar Venda</button>
      </div>
     </form>
    </section>
@@ -320,19 +358,28 @@
   <div id="auth-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
    <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-8 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="auth-title">
     <div class="text-center mb-8">
-     <div class="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4 bg-black flex items-center justify-center"><img data-template-id="auth-logo" loading="lazy" class="canva-image w-full h-full object-contain p-1">
+     <div class="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4 bg-black flex items-center justify-center">
+      <i data-lucide="lock" class="w-7 h-7 text-[#f4d35e]"></i>
      </div>
-     <h1 id="auth-title" data-template-id="auth-title" class="canva-text font-bold"></h1>
-     <p data-template-id="auth-description" class="canva-text mt-2"></p>
+     <h1 id="auth-title" class="font-bold text-xl text-[#211b0f]">Área Restrita</h1>
+     <p class="mt-2 text-sm text-[#786d55]">Entre com seu e-mail e senha de administrador.</p>
     </div>
-    <form id="auth-form"><label data-template-id="auth-password-label" class="canva-text block font-bold mb-2" for="auth-password"></label> <input id="auth-password" required type="password" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-6" placeholder=""> <button id="auth-button" type="submit" data-template-id="auth-button" class="canva-button gold-button w-full rounded-xl px-5 py-3 font-bold"></button>
+    <form id="auth-form">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="auth-email">E-mail</label>
+     <input id="auth-email" required type="email" autocomplete="username" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-4">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="auth-password">Senha</label>
+     <input id="auth-password" required type="password" autocomplete="current-password" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-6">
+     <button id="auth-button" type="submit" class="gold-button w-full rounded-xl px-5 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Entrar</button>
      <p id="auth-error" class="text-xs text-red-600 font-bold mt-3 text-center hidden"></p>
     </form>
    </section>
   </div>
   <template id="store-product-template">
    <article class="product-card rounded-2xl overflow-hidden bg-white border border-[#e3d7b5] flex flex-col">
-    <div class="h-40 relative bg-gradient-to-br from-[#17140b] to-[#49370a] flex items-center justify-center overflow-hidden"><img class="product-photo hidden absolute inset-0 w-full h-full object-cover" alt=""> <i data-lucide="smartphone" class="product-icon w-16 h-16 text-[#f4d35e]"></i> <span class="product-category absolute top-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold text-[#fff1a8] backdrop-blur"></span>
+    <div class="h-40 relative bg-gradient-to-br from-[#17140b] to-[#49370a] flex items-center justify-center overflow-hidden">
+     <img class="product-photo hidden absolute inset-0 w-full h-full object-cover" alt="">
+     <i data-lucide="smartphone" class="product-icon w-16 h-16 text-[#f4d35e]"></i>
+     <span class="product-category absolute top-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold text-[#fff1a8] backdrop-blur"></span>
     </div>
     <div class="p-5 flex flex-col flex-1">
      <h3 class="product-name font-bold text-lg leading-tight text-[#211b0f]"></h3>
@@ -341,15 +388,16 @@
       <div>
        <p class="text-[10px] mono text-[#9c9072]">A PARTIR DE</p>
        <p class="product-price mono font-bold text-lg text-[#211b0f]"></p>
-      </div><span class="product-stock text-xs font-bold"></span>
-     </div><button type="button" class="order-button mt-5 w-full rounded-xl bg-[#f4d35e] px-4 py-3 text-sm font-bold text-[#241a06] hover:bg-[#e3bb3e]">Pedir no WhatsApp</button>
+      </div>
+      <span class="product-stock text-xs font-bold"></span>
+     </div>
+     <button type="button" class="order-button mt-5 w-full rounded-xl bg-[#f4d35e] px-4 py-3 text-sm font-bold text-[#241a06] hover:bg-[#e3bb3e]">Pedir no WhatsApp</button>
     </div>
    </article>
   </template>
   <template id="admin-product-template">
    <article class="admin-product p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-4">
-    <div class="w-11 h-11 rounded-xl shrink-0 bg-[#fff4c7] text-[#8b6515] flex items-center justify-center"><i data-lucide="smartphone" class="w-5 h-5"></i>
-    </div>
+    <div class="w-11 h-11 rounded-xl shrink-0 bg-[#fff4c7] text-[#8b6515] flex items-center justify-center"><i data-lucide="smartphone" class="w-5 h-5"></i></div>
     <div class="min-w-0 flex-1">
      <div class="flex flex-wrap items-center gap-2">
       <h3 class="admin-name font-bold"></h3><span class="admin-category rounded-full bg-[#f7f0da] px-2.5 py-1 text-[10px] font-bold text-[#6e5522]"></span>
@@ -357,33 +405,27 @@
      <p class="admin-description text-sm text-[#786d55] mt-1 truncate"></p>
     </div>
     <div class="grid grid-cols-3 gap-4 text-left lg:text-right">
-     <div>
-      <p class="mono text-[10px] text-[#9c9072]">PREÇO</p>
-      <p class="admin-price mono text-sm font-bold"></p>
-     </div>
-     <div>
-      <p class="mono text-[10px] text-[#9c9072]">CUSTO</p>
-      <p class="admin-cost mono text-sm font-bold"></p>
-     </div>
-     <div>
-      <p class="mono text-[10px] text-[#9c9072]">ESTOQUE</p>
-      <p class="admin-stock mono text-sm font-bold"></p>
-     </div>
+     <div><p class="mono text-[10px] text-[#9c9072]">PREÇO</p><p class="admin-price mono text-sm font-bold"></p></div>
+     <div><p class="mono text-[10px] text-[#9c9072]">CUSTO</p><p class="admin-cost mono text-sm font-bold"></p></div>
+     <div><p class="mono text-[10px] text-[#9c9072]">ESTOQUE</p><p class="admin-stock mono text-sm font-bold"></p></div>
     </div>
-    <div class="flex gap-2"><button type="button" class="sell-button rounded-lg bg-[#1b1608] px-3 py-2 text-xs font-bold text-[#fff1a8]">Vender</button> <button type="button" class="edit-button rounded-lg border border-[#e3d7b5] p-2 text-[#6e5522] hover:bg-[#fff7dc]" aria-label="Editar produto"><i data-lucide="pencil" class="w-4 h-4"></i></button> <button type="button" class="delete-button rounded-lg border border-red-100 p-2 text-red-600 hover:bg-red-50" aria-label="Excluir produto"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+    <div class="flex gap-2">
+     <button type="button" class="sell-button rounded-lg bg-[#1b1608] px-3 py-2 text-xs font-bold text-[#fff1a8]">Vender</button>
+     <button type="button" class="edit-button rounded-lg border border-[#e3d7b5] p-2 text-[#6e5522] hover:bg-[#fff7dc]" aria-label="Editar produto"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+     <button type="button" class="delete-button rounded-lg border border-red-100 p-2 text-red-600 hover:bg-red-50" aria-label="Excluir produto"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
     </div>
-    <div class="delete-confirm hidden w-full lg:w-auto items-center gap-2"><span class="text-xs font-bold text-red-600">Excluir item?</span> <button type="button" class="confirm-delete text-xs font-bold text-red-600 underline">Sim</button> <button type="button" class="cancel-delete text-xs font-bold text-[#786d55] underline">Não</button>
+    <div class="delete-confirm hidden w-full lg:w-auto items-center gap-2">
+     <span class="text-xs font-bold text-red-600">Excluir item?</span>
+     <button type="button" class="confirm-delete text-xs font-bold text-red-600 underline">Sim</button>
+     <button type="button" class="cancel-delete text-xs font-bold text-[#786d55] underline">Não</button>
     </div>
    </article>
   </template>
-  <script src="/_sdk/b23f1f6ec78e9bd4.editing_sdk.js" integrity="sha512-WFdQutvUZzxrmcHkL8cbfuFDTeF8Cn8Bt3yqX/a/OdiqPz/t9UcjsIsZK7D+tMTmC2JTwhwRJNyfcHmIWhG8Wg=="></script>
-  
-  <script>
-    const WHATSAPP = "5584987181612";
-    let products = [];
-    let activeSale = null;
 
-    // 1. Configurações de Conexão com o seu Firebase
+  <script>
+    // ====== CONFIGURAÇÃO DO FIREBASE ======
+    // Troque pelos dados do SEU projeto (Firebase Console > Configurações do projeto).
+    // Essas chaves não são segredo — quem protege os dados são as REGRAS do Firestore (veja firestore.rules).
     const firebaseConfig = {
       apiKey: "AIzaSyCTrWbDpbsdvRjdSrGjJvmRm3RS15IsbZ8",
       authDomain: "planning-with-ai-55f7c.firebaseapp.com",
@@ -393,14 +435,54 @@
       appId: "1:364652688481:web:035e687d110e8d79c0e620"
     };
 
-    // Inicializar o Firebase e Banco Firestore
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth();
+    const productsCollection = db.collection("products");
 
-    // Habilitar a Autenticação Anônima para Acesso Seguro ao Firestore
-    firebase.auth().signInAnonymously()
-      .then(() => console.log("Conectado anonimamente e de forma segura ao Firebase!"))
-      .catch((error) => console.error("Erro ao autenticar anonimamente:", error));
+    // Camada que substitui o "window.dataSdk" do Canva, usando o Firestore.
+    const dataSdk = {
+      init(handler) {
+        productsCollection.onSnapshot(
+          snapshot => {
+            const data = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
+            handler.onDataChanged(data);
+          },
+          () => toast("Não foi possível carregar os produtos agora.")
+        );
+        return Promise.resolve({ isOk: true });
+      },
+      async create(record) {
+        try {
+          await productsCollection.add(record);
+          return { isOk: true };
+        } catch (e) {
+          return { isOk: false };
+        }
+      },
+      async update(record) {
+        try {
+          const { __backendId, ...fields } = record;
+          await productsCollection.doc(__backendId).set(fields, { merge: true });
+          return { isOk: true };
+        } catch (e) {
+          return { isOk: false };
+        }
+      },
+      async delete(record) {
+        try {
+          await productsCollection.doc(record.__backendId).delete();
+          return { isOk: true };
+        } catch (e) {
+          return { isOk: false };
+        }
+      }
+    };
+
+    const WHATSAPP = "5584987181612";
+    let products = [];
+    let activeSale = null;
+    let sawFirstSnapshot = false;
 
     const el = id => document.getElementById(id);
     const money = value => new Intl.NumberFormat("pt-BR", {
@@ -555,9 +637,255 @@
       onDataChanged(data) {
         products = data.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         renderAll();
+
+        // Na primeira carga, se não houver produtos, cria os produtos de exemplo.
+        if (!sawFirstSnapshot) {
+          sawFirstSnapshot = true;
+          if (products.length === 0) seedExampleProducts();
+        }
       }
     };
 
-    // 2. Conectando a Inicialização e Carregamento com o Firestore em Tempo Real
-    async function initData() {
-Sem resposta
+    async function seedExampleProducts() {
+      const examples = [
+        { name: "iPhone 15 Pro Max", description: "Smartphone premium com câmera profissional e processador A18", price: 8499, cost: 6800, stock: 12, category: "Celulares", image_url: "https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Samsung Galaxy S24", description: "Flagship Android com IA integrada e bateria durável", price: 5999, cost: 4200, stock: 18, category: "Celulares", image_url: "https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Carregador Rápido 65W USB-C", description: "Carregamento ultra-rápido compatível com múltiplos dispositivos", price: 189, cost: 65, stock: 45, category: "Acessórios", image_url: "https://images.pexels.com/photos/4239291/pexels-photo-4239291.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Fone Bluetooth Premium", description: "Áudio estéreo com cancelamento de ruído ativo", price: 549, cost: 220, stock: 28, category: "Acessórios", image_url: "https://images.pexels.com/photos/3584994/pexels-photo-3584994.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Protetor de Tela Temperado", description: "Vidro temperado 9H com aplicação sem bolhas", price: 49, cost: 12, stock: 120, category: "Acessórios", image_url: "https://images.pexels.com/photos/3823517/pexels-photo-3823517.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Assistência Técnica Completa", description: "Diagnóstico, reparo e manutenção preventiva", price: 150, cost: 30, stock: 999, category: "Assistência técnica", image_url: "", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() }
+      ];
+      for (const product of examples) {
+        await dataSdk.create(product);
+      }
+    }
+
+    function openForm() {
+      el("product-form-panel").classList.remove("hidden");
+      el("product-name").focus();
+    }
+
+    function closeForm() {
+      el("product-form-panel").classList.add("hidden");
+      el("product-form").reset();
+      el("editing-id").value = "";
+    }
+
+    function editProduct(product) {
+      setView("admin");
+      openForm();
+
+      el("editing-id").value = product.__backendId;
+      el("product-name").value = product.name;
+      el("product-category").value = product.category;
+      el("product-stock").value = product.stock;
+      el("product-price").value = product.price;
+      el("product-cost").value = product.cost;
+      el("product-image-url").value = product.image_url || "";
+      el("product-description").value = product.description;
+
+      el("product-form-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function deleteProduct(product, article) {
+      const confirmButton = article.querySelector(".confirm-delete");
+      confirmButton.disabled = true;
+
+      const result = await dataSdk.delete(product);
+      if (result.isOk) {
+        toast("Produto removido do catálogo.");
+      } else {
+        toast("Não foi possível excluir este produto.");
+        confirmButton.disabled = false;
+      }
+    }
+
+    function openSale(product) {
+      if (Number(product.stock) < 1) return;
+
+      activeSale = product;
+      el("sale-product-name").textContent = product.name;
+      el("sale-stock-info").textContent = "Disponível em estoque: " + product.stock + " unidade(s).";
+      el("sale-quantity").max = product.stock;
+      el("sale-quantity").value = 1;
+      el("sale-modal").classList.remove("hidden");
+      el("sale-modal").classList.add("flex");
+      el("sale-quantity").focus();
+    }
+
+    function closeSale() {
+      el("sale-modal").classList.add("hidden");
+      el("sale-modal").classList.remove("flex");
+      activeSale = null;
+    }
+
+    function downloadReceipt(product, quantity) {
+      const total = Number(product.price) * quantity;
+      const now = new Date();
+
+      const receipt =
+        "GALEGO CELL — COMPROVANTE DE VENDA\n" +
+        "----------------------------------------\n" +
+        "Data: " + now.toLocaleString("pt-BR") + "\n" +
+        "Produto: " + product.name + "\n" +
+        "Quantidade: " + quantity + "\n" +
+        "Valor unitário: " + money(product.price) + "\n" +
+        "TOTAL: " + money(total) + "\n" +
+        "----------------------------------------\n" +
+        "Obrigado pela preferência!";
+
+      const link = document.createElement("a");
+      const blobUrl = URL.createObjectURL(new Blob([receipt], { type: "text/plain;charset=utf-8" }));
+      link.href = blobUrl;
+      link.download = "comprovante-galego-cell-" + Date.now() + ".txt";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(blobUrl);
+    }
+
+    // ====== AUTENTICAÇÃO (Firebase Auth substitui a senha fixa no código) ======
+    function requireAuth(callback) {
+      if (auth.currentUser) {
+        callback();
+      } else {
+        el("auth-modal").classList.remove("hidden");
+        el("auth-email").focus();
+        window.pendingAuthCallback = callback;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      dataSdk.init(handler);
+
+      el("auth-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        const email = el("auth-email").value.trim();
+        const password = el("auth-password").value;
+        const errorEl = el("auth-error");
+        const authButton = el("auth-button");
+        authButton.disabled = true;
+
+        try {
+          await auth.signInWithEmailAndPassword(email, password);
+          el("auth-modal").classList.add("hidden");
+          el("auth-password").value = "";
+          errorEl.classList.add("hidden");
+          if (window.pendingAuthCallback) {
+            window.pendingAuthCallback();
+            window.pendingAuthCallback = null;
+          }
+        } catch (e) {
+          errorEl.textContent = "E-mail ou senha incorretos. Tente novamente.";
+          errorEl.classList.remove("hidden");
+          el("auth-password").value = "";
+          el("auth-password").focus();
+        } finally {
+          authButton.disabled = false;
+        }
+      });
+
+      document.querySelectorAll("[data-view-target]").forEach(button => {
+        button.addEventListener("click", () => {
+          if (button.dataset.viewTarget === "admin") {
+            requireAuth(() => setView("admin"));
+          } else {
+            setView(button.dataset.viewTarget);
+          }
+        });
+      });
+
+      el("open-maps").addEventListener("click", () => {
+        el("maps-link").click();
+      });
+
+      el("brand-button").addEventListener("click", () => setView("store"));
+      el("floating-whatsapp").addEventListener("click", () => openWhatsApp("Olá, Galego Cell! Preciso de atendimento."));
+      el("hero-whatsapp").addEventListener("click", () => openWhatsApp("Olá, Galego Cell! Gostaria de falar com um especialista."));
+      el("product-search").addEventListener("input", renderStore);
+      el("category-filter").addEventListener("change", renderStore);
+      el("new-product-button").addEventListener("click", openForm);
+      el("close-form-button").addEventListener("click", closeForm);
+      el("cancel-form-button").addEventListener("click", closeForm);
+      el("close-sale-modal").addEventListener("click", closeSale);
+      el("cancel-sale-button").addEventListener("click", closeSale);
+
+      el("product-form").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const saveButton = el("save-product-button");
+        saveButton.disabled = true;
+
+        const id = el("editing-id").value;
+        const existing = products.find(product => product.__backendId === id);
+
+        const record = {
+          name: el("product-name").value.trim(),
+          description: el("product-description").value.trim(),
+          price: Number(el("product-price").value),
+          cost: Number(el("product-cost").value),
+          stock: Number(el("product-stock").value),
+          category: el("product-category").value,
+          image_url: el("product-image-url").value.trim(),
+          status: "ativo",
+          sold_quantity: existing ? Number(existing.sold_quantity || 0) : 0,
+          created_at: existing ? existing.created_at : new Date().toISOString()
+        };
+
+        let result;
+        if (existing) {
+          result = await dataSdk.update({ __backendId: existing.__backendId, ...record });
+        } else {
+          if (products.length >= 999) {
+            toast("Limite de 999 produtos atingido.");
+            saveButton.disabled = false;
+            return;
+          }
+          result = await dataSdk.create(record);
+        }
+
+        saveButton.disabled = false;
+
+        if (result.isOk) {
+          toast(existing ? "Produto atualizado com sucesso." : "Produto cadastrado com sucesso.");
+          closeForm();
+        } else {
+          toast("Não foi possível salvar o produto.");
+        }
+      });
+
+      el("sale-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!activeSale) return;
+
+        const quantity = Number(el("sale-quantity").value);
+        if (quantity < 1 || quantity > Number(activeSale.stock)) {
+          toast("Informe uma quantidade disponível em estoque.");
+          return;
+        }
+
+        const confirmButton = el("confirm-sale-button");
+        confirmButton.disabled = true;
+
+        const updated = {
+          __backendId: activeSale.__backendId,
+          stock: Number(activeSale.stock) - quantity,
+          sold_quantity: Number(activeSale.sold_quantity || 0) + quantity
+        };
+
+        const result = await dataSdk.update(updated);
+        confirmButton.disabled = false;
+
+        if (result.isOk) {
+          downloadReceipt(activeSale, quantity);
+          closeSale();
+          toast("Venda registrada e comprovante gerado.");
+        } else {
+          toast("Não foi possível registrar a venda.");
+        }
+      });
+    });
+  </script>
+ </body>
+</html>
