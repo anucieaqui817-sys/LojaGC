@@ -475,7 +475,28 @@
       </div>
      </div>
      <div id="subview-equipe" class="admin-subview">
-      <p class="text-sm text-[#786d55]">(Equipe entra aqui na Parte 3)</p>
+      <div id="equipe-admin-view" class="hidden">
+       <div class="mb-6">
+        <h2 class="font-bold text-xl text-[#211b0f]">Equipe e Comissões</h2>
+        <p class="mt-1 text-sm text-[#786d55]">Defina a regra de comissão de cada funcionário e acompanhe o total acumulado</p>
+       </div>
+       <div id="equipe-list" class="space-y-4"></div>
+       <div id="equipe-empty" class="hidden rounded-2xl border border-[#ddcfaa] bg-white p-12 text-center">
+        <i data-lucide="users" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+        <p class="font-semibold mt-4 text-[#786d55]">Nenhum funcionário cadastrado em "roles" ainda.</p>
+       </div>
+      </div>
+      <div id="equipe-seller-view" class="hidden">
+       <div class="mb-6">
+        <h2 class="font-bold text-xl text-[#211b0f]">Minha Comissão</h2>
+        <p class="mt-1 text-sm text-[#786d55]">Total acumulado com base nas suas vendas concluídas</p>
+       </div>
+       <div class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm p-6">
+        <p id="my-commission-rule" class="text-sm text-[#786d55]">Nenhuma regra de comissão configurada ainda. Fale com seu gerente.</p>
+        <p class="mono mt-6 text-3xl font-bold text-[#211b0f]" id="my-commission-total">R$ 0,00</p>
+        <p class="mt-2 text-sm text-[#786d55]">Comissão acumulada</p>
+       </div>
+      </div>
      </div>
     </div>
    </section>
@@ -814,6 +835,32 @@
    </article>
   </template>
 
+  <template id="equipe-row-template">
+   <article class="equipe-row rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm p-5 sm:p-6">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+     <div>
+      <h3 class="equipe-name font-bold text-[#211b0f]"></h3>
+      <span class="equipe-role-label rounded-full bg-[#f7f0da] px-2.5 py-1 text-[10px] font-bold text-[#6e5522]"></span>
+     </div>
+     <div class="text-right">
+      <p class="mono text-[10px] text-[#9c9072]">COMISSÃO ACUMULADA</p>
+      <p class="equipe-total mono text-lg font-bold text-[#211b0f]"></p>
+     </div>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-3 items-end">
+     <div><label class="block font-bold mb-1 text-xs text-[#786d55]">Tipo de comissão</label>
+      <select class="equipe-commission-type w-full rounded-xl border border-[#d5c9a8] bg-white px-3 py-2.5 text-sm">
+       <option value="nenhuma">Sem comissão</option>
+       <option value="percentual">% sobre vendas</option>
+       <option value="fixo_por_venda">Valor fixo por venda</option>
+      </select></div>
+     <div><label class="block font-bold mb-1 text-xs text-[#786d55]">Valor</label>
+      <input type="number" min="0" step="0.01" class="equipe-commission-value w-full rounded-xl border border-[#d5c9a8] bg-white px-3 py-2.5 text-sm"></div>
+     <button type="button" class="equipe-save-button rounded-xl px-4 py-2.5 font-bold border border-[#d5c9a8] text-[#211b0f] hover:bg-[#f5eedb]">Salvar</button>
+    </div>
+   </article>
+  </template>
+
   <template id="sale-history-template">
    <article class="sale-history-row p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-3">
     <div class="min-w-0 flex-1">
@@ -933,8 +980,12 @@
     let sawFirstSnapshot = false;
     let currentRole = null;
     let currentUserName = "";
+    let currentCommissionType = "nenhuma";
+    let currentCommissionValue = 0;
     let salesData = [];
     let unsubscribeSales = null;
+    let rolesData = [];
+    let unsubscribeRoles = null;
     let saleToCancel = null;
     let cart = [];
     let currentCashSession = null;
@@ -1215,6 +1266,7 @@
         snapshot => {
           salesData = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
           renderSalesHistory();
+          renderEquipe();
         },
         () => {}
       );
@@ -1227,6 +1279,100 @@
       }
       salesData = [];
       renderSalesHistory();
+    }
+
+    function computeCommissionForSeller(uid, type, value) {
+      const numValue = Number(value) || 0;
+      const sellerSales = salesData.filter(sale => sale.seller_uid === uid && sale.status !== "cancelada");
+      if (type === "percentual") {
+        const total = sellerSales.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0);
+        return total * (numValue / 100);
+      }
+      if (type === "fixo_por_venda") {
+        return sellerSales.length * numValue;
+      }
+      return 0;
+    }
+
+    function startRolesListener() {
+      if (unsubscribeRoles || !isAdmin()) return;
+      unsubscribeRoles = rolesCollection.onSnapshot(
+        snapshot => {
+          rolesData = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
+          renderEquipe();
+        },
+        () => {}
+      );
+    }
+
+    function stopRolesListener() {
+      if (unsubscribeRoles) {
+        unsubscribeRoles();
+        unsubscribeRoles = null;
+      }
+      rolesData = [];
+    }
+
+    function renderEquipe() {
+      const adminView = el("equipe-admin-view");
+      const sellerView = el("equipe-seller-view");
+      if (!adminView || !sellerView) return;
+
+      const admin = isAdmin();
+      adminView.classList.toggle("hidden", !admin);
+      sellerView.classList.toggle("hidden", admin);
+
+      if (admin) {
+        const roleLabel = { owner: "Dono", gerente: "Gerente", vendedor: "Vendedor" };
+        const list = el("equipe-list");
+        list.replaceChildren();
+
+        rolesData.forEach(person => {
+          const fragment = el("equipe-row-template").content.cloneNode(true);
+          const article = fragment.querySelector(".equipe-row");
+
+          article.querySelector(".equipe-name").textContent = person.name || "(sem nome)";
+          article.querySelector(".equipe-role-label").textContent = roleLabel[person.role] || person.role || "—";
+
+          const typeSelect = article.querySelector(".equipe-commission-type");
+          const valueInput = article.querySelector(".equipe-commission-value");
+          const totalLabel = article.querySelector(".equipe-total");
+
+          const personType = person.commission_type || "nenhuma";
+          const personValue = person.commission_value || 0;
+          typeSelect.value = personType;
+          valueInput.value = personValue;
+          totalLabel.textContent = money(computeCommissionForSeller(person.__backendId, personType, personValue));
+
+          article.querySelector(".equipe-save-button").addEventListener("click", async () => {
+            try {
+              await rolesCollection.doc(person.__backendId).update({
+                commission_type: typeSelect.value,
+                commission_value: Number(valueInput.value) || 0
+              });
+              toast("Comissão atualizada.");
+            } catch (e) {
+              toast("Não foi possível salvar a comissão.");
+            }
+          });
+
+          list.appendChild(fragment);
+        });
+
+        el("equipe-empty").classList.toggle("hidden", rolesData.length !== 0);
+        lucide.createIcons();
+      } else if (auth.currentUser) {
+        const ruleLabel = el("my-commission-rule");
+        const totalLabel = el("my-commission-total");
+        if (currentCommissionType === "percentual") {
+          ruleLabel.textContent = "Sua regra: " + currentCommissionValue + "% sobre o total das suas vendas.";
+        } else if (currentCommissionType === "fixo_por_venda") {
+          ruleLabel.textContent = "Sua regra: " + money(currentCommissionValue) + " por venda concluída.";
+        } else {
+          ruleLabel.textContent = "Nenhuma regra de comissão configurada ainda. Fale com seu gerente.";
+        }
+        totalLabel.textContent = money(computeCommissionForSeller(auth.currentUser.uid, currentCommissionType, currentCommissionValue));
+      }
     }
 
     async function seedExampleProducts() {
@@ -1957,9 +2103,13 @@
           if (roleSnap.exists && roleSnap.data().role) {
             currentRole = roleSnap.data().role;
             currentUserName = roleSnap.data().name || auth.currentUser.email;
+            currentCommissionType = roleSnap.data().commission_type || "nenhuma";
+            currentCommissionValue = roleSnap.data().commission_value || 0;
             startSalesListener();
             startCashierListener();
             startOSListener();
+            startRolesListener();
+            renderEquipe();
             await refreshProducts(rawProducts);
             callback();
             return;
@@ -2061,6 +2211,8 @@
 
           currentRole = roleSnap.data().role;
           currentUserName = roleSnap.data().name || email;
+          currentCommissionType = roleSnap.data().commission_type || "nenhuma";
+          currentCommissionValue = roleSnap.data().commission_value || 0;
 
           el("auth-modal").classList.add("hidden");
           el("auth-password").value = "";
@@ -2069,6 +2221,8 @@
           startSalesListener();
           startCashierListener();
           startOSListener();
+          startRolesListener();
+          renderEquipe();
           await refreshProducts(rawProducts);
 
           if (window.pendingAuthCallback) {
@@ -2089,11 +2243,14 @@
         await auth.signOut();
         currentRole = null;
         currentUserName = "";
+        currentCommissionType = "nenhuma";
+        currentCommissionValue = 0;
         cart = [];
         renderCartBadge();
         stopSalesListener();
         stopCashierListener();
         stopOSListener();
+        stopRolesListener();
         await refreshProducts(rawProducts);
         setView("store");
         toast("Sessão encerrada.");
