@@ -75,6 +75,9 @@
     .view { display: none; }
     .view.active { display: block; animation: rise .35s ease both; }
 
+    .admin-subview { display: none; }
+    .admin-subview.active { display: block; animation: rise .35s ease both; }
+
     @keyframes rise {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -303,6 +306,14 @@
        <p class="mt-2 text-sm text-[#786d55]">Unidades vendidas</p>
       </article>
      </section>
+     <nav aria-label="Seções do painel" class="flex gap-2 mb-6 overflow-x-auto pb-1">
+      <button type="button" data-subview="estoque" class="subtab-button tab-active whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Estoque</button>
+      <button type="button" data-subview="vendas" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Vendas</button>
+      <button type="button" data-subview="caixa" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Caixa</button>
+      <button type="button" data-subview="os" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Ordens de Serviço</button>
+      <button type="button" data-subview="equipe" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Equipe</button>
+     </nav>
+     <div id="subview-estoque" class="admin-subview active">
      <section id="product-form-panel" class="hidden rounded-2xl bg-[#15130d] p-5 sm:p-7 mb-8 shadow-2xl">
       <div class="flex items-center justify-between gap-4 mb-6">
        <div>
@@ -347,12 +358,19 @@
        </div>
        <span id="inventory-count" class="mono text-xs rounded-full bg-[#fff4c7] px-3 py-1.5 text-[#75500b]">0 ITENS</span>
       </div>
+      <div class="p-5 sm:p-6 pb-0 relative">
+       <label class="sr-only" for="admin-product-search">Buscar produto no estoque</label>
+       <i data-lucide="search" class="absolute left-8 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400"></i>
+       <input id="admin-product-search" type="search" placeholder="Buscar produto ou serviço..." class="w-full rounded-xl border border-[#d5c9a8] bg-white pl-10 pr-4 py-3 text-sm">
+      </div>
       <div id="admin-products" class="divide-y divide-[#f0e8d2]"></div>
       <div id="admin-empty" class="p-12 text-center">
        <i data-lucide="package-plus" class="w-10 h-10 mx-auto text-[#b88718]"></i>
        <p class="font-semibold mt-4 text-[#786d55]">Nenhum produto cadastrado ainda.</p>
       </div>
      </section>
+     </div>
+     <div id="subview-vendas" class="admin-subview">
      <section class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm mt-8">
       <div class="p-5 sm:p-6 border-b border-[#eadfbe] flex items-center justify-between gap-4">
        <div>
@@ -366,6 +384,8 @@
        <p class="font-semibold mt-4 text-[#786d55]">Nenhuma venda registrada ainda.</p>
       </div>
      </section>
+     </div>
+     <div id="subview-caixa" class="admin-subview">
      <section class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm mt-8">
       <div class="p-5 sm:p-6 border-b border-[#eadfbe]">
        <h2 class="font-bold text-[#211b0f]">Histórico de Caixa</h2>
@@ -377,6 +397,95 @@
        <p class="font-semibold mt-4 text-[#786d55]">Nenhum caixa registrado ainda.</p>
       </div>
      </section>
+     </div>
+     <div id="subview-os" class="admin-subview">
+      <div class="flex items-center justify-between gap-3 mb-6">
+       <div>
+        <h2 class="font-bold text-xl text-[#211b0f]">Ordens de Serviço</h2>
+        <p class="mt-1 text-sm text-[#786d55]">Acompanhamento de consertos, do recebimento à entrega</p>
+       </div>
+       <button id="new-os-button" type="button" class="gold-button inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold bg-[#f4d35e] text-[#241a06]">
+        <i data-lucide="plus" class="w-5 h-5"></i> <span>Nova OS</span>
+       </button>
+      </div>
+      <div class="mb-4">
+       <label class="sr-only" for="os-search">Buscar OS</label>
+       <input id="os-search" type="search" placeholder="Buscar por cliente, aparelho ou nº da OS..." class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 text-sm">
+      </div>
+      <section id="os-form-panel" class="hidden rounded-2xl bg-[#15130d] p-5 sm:p-7 mb-8 shadow-2xl">
+       <div class="flex items-center justify-between gap-4 mb-6">
+        <div>
+         <h2 id="os-form-title" class="font-bold text-[#fff1a8]">Nova Ordem de Serviço</h2>
+         <p class="mt-1 text-sm text-[#c9bd94]">Dados do cliente, aparelho e defeito relatado.</p>
+        </div>
+        <button id="close-os-form-button" type="button" class="p-2 rounded-lg text-[#f4d35e] hover:bg-white/10" aria-label="Fechar"><i data-lucide="x"></i></button>
+       </div>
+       <form id="os-form">
+        <input id="os-editing-id" type="hidden">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-customer-name">Nome do cliente</label>
+          <input id="os-customer-name" required maxlength="80" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-customer-phone">Telefone</label>
+          <input id="os-customer-phone" required maxlength="20" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-warranty">Garantia</label>
+          <select id="os-warranty" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
+           <option value="0">Sem garantia</option>
+           <option value="30">30 dias</option>
+           <option value="90" selected>90 dias</option>
+           <option value="180">180 dias</option>
+          </select></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-device-brand">Marca do aparelho</label>
+          <input id="os-device-brand" required maxlength="40" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-device-model">Modelo</label>
+          <input id="os-device-model" required maxlength="40" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-device-color">Cor</label>
+          <input id="os-device-color" maxlength="30" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-device-imei">IMEI / Série (opcional)</label>
+          <input id="os-device-imei" maxlength="40" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-device-password">Senha do aparelho (opcional)</label>
+          <input id="os-device-password" maxlength="20" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-status">Status</label>
+          <select id="os-status" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
+           <option value="aberta">Aberta</option>
+           <option value="em_analise">Em análise</option>
+           <option value="aguardando_peca">Aguardando peça</option>
+           <option value="em_conserto">Em conserto</option>
+           <option value="pronta">Pronta para retirada</option>
+           <option value="cancelada">Cancelada</option>
+          </select></div>
+         <div class="md:col-span-2 lg:col-span-3"><label class="block font-bold mb-2 text-[#fff1a8]" for="os-reported-issue">Defeito relatado pelo cliente</label>
+          <textarea id="os-reported-issue" required maxlength="300" rows="2" class="w-full resize-none rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></textarea></div>
+         <div class="md:col-span-2 lg:col-span-3"><label class="block font-bold mb-2 text-[#fff1a8]" for="os-technical-report">Laudo técnico (opcional, preencha ao diagnosticar)</label>
+          <textarea id="os-technical-report" maxlength="300" rows="2" class="w-full resize-none rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></textarea></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-parts-value">Valor das peças (R$)</label>
+          <input id="os-parts-value" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white" value="0"></div>
+         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="os-labor-value">Valor da mão de obra (R$)</label>
+          <input id="os-labor-value" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white" value="0"></div>
+        </div>
+        <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6">
+         <button id="cancel-os-form-button" type="button" class="rounded-xl px-5 py-3 font-bold border border-[#5d522f] text-[#fff1a8]">Cancelar</button>
+         <button id="save-os-button" type="submit" class="gold-button rounded-xl px-5 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Salvar OS</button>
+        </div>
+       </form>
+      </section>
+      <div id="os-list" class="space-y-4"></div>
+      <div id="os-empty" class="p-12 text-center rounded-2xl border border-dashed border-[#c9b887] bg-[#fffcf1]">
+       <i data-lucide="wrench" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+       <p class="font-semibold mt-4 text-[#786d55]">Nenhuma ordem de serviço aberta.</p>
+      </div>
+     </div>
+     <div id="subview-equipe" class="admin-subview">
+      <div id="equipe-admin-view">
+       <h2 class="font-bold text-xl text-[#211b0f] mb-1">Comissão da Equipe</h2>
+       <p class="text-sm text-[#786d55] mb-6">Defina quanto cada vendedor ganha por venda — em % ou valor fixo.</p>
+       <div id="equipe-list" class="space-y-4"></div>
+      </div>
+      <div id="equipe-seller-view" class="hidden rounded-2xl p-6 bg-white border border-[#e3d7b5] text-center">
+       <p class="text-sm text-[#786d55] mb-1">Minha comissão acumulada</p>
+       <p id="my-commission-total" class="mono font-bold text-3xl text-[#211b0f]">R$ 0,00</p>
+       <p id="my-commission-rule" class="text-xs text-[#9c9072] mt-2"></p>
+      </div>
+     </div>
     </div>
    </section>
   </main>
@@ -447,6 +556,27 @@
    </div>
   </template>
 
+  <div id="finalize-os-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
+   <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-6 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="finalize-os-title">
+    <div class="flex justify-between gap-4 mb-4">
+     <h2 id="finalize-os-title" class="font-bold text-xl text-[#211b0f]">Finalizar e Cobrar OS</h2>
+     <button id="close-finalize-os-modal" type="button" class="p-2 h-fit rounded-lg hover:bg-[#f5eedb]" aria-label="Fechar"><i data-lucide="x"></i></button>
+    </div>
+    <p id="finalize-os-summary" class="text-sm text-[#4b4227] mb-4"></p>
+    <label class="block font-bold mb-2 text-[#211b0f]" for="finalize-os-payment-method">Forma de pagamento</label>
+    <select id="finalize-os-payment-method" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-6">
+     <option value="dinheiro">Dinheiro</option>
+     <option value="pix">Pix</option>
+     <option value="credito">Cartão de Crédito</option>
+     <option value="debito">Cartão de Débito</option>
+    </select>
+    <div class="flex gap-3">
+     <button id="cancel-finalize-os" type="button" class="flex-1 rounded-xl px-4 py-3 font-bold border border-[#d5c9a8] text-[#211b0f]">Cancelar</button>
+     <button id="confirm-finalize-os" type="button" class="flex-1 gold-button rounded-xl px-4 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Confirmar e Gerar Recibo</button>
+    </div>
+   </section>
+  </div>
+
   <div id="open-cashier-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
    <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-8 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="open-cashier-title">
     <div class="text-center mb-6">
@@ -503,6 +633,86 @@
     </div>
    </article>
   </template>
+
+  <template id="os-card-template">
+   <article class="os-card rounded-2xl border border-[#e3d7b5] bg-white p-5">
+    <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
+     <div>
+      <p class="os-number mono text-xs font-bold text-[#b88718]"></p>
+      <h3 class="os-customer font-bold text-lg text-[#211b0f]"></h3>
+      <p class="os-device text-sm text-[#786d55]"></p>
+     </div>
+     <span class="os-status-badge rounded-full px-3 py-1 text-xs font-bold"></span>
+    </div>
+    <p class="os-issue text-sm text-[#4b4227] mb-3"></p>
+    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[#f0e8d2] pt-3">
+     <p class="os-meta text-xs text-[#9c9072]"></p>
+     <p class="os-total mono font-bold text-[#211b0f]"></p>
+    </div>
+    <div class="os-actions flex flex-wrap gap-2 mt-4"></div>
+   </article>
+  </template>
+
+  <template id="equipe-row-template">
+   <div class="equipe-row rounded-2xl border border-[#e3d7b5] bg-white p-5">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+     <p class="equipe-name font-bold text-[#211b0f]"></p>
+     <p class="equipe-commission-total mono font-bold text-[#b88718]"></p>
+    </div>
+    <div class="flex flex-wrap items-end gap-3">
+     <div>
+      <label class="block text-xs font-bold mb-1 text-[#786d55]">Tipo</label>
+      <select class="equipe-commission-type rounded-lg border border-[#d5c9a8] bg-white px-3 py-2 text-sm">
+       <option value="percentual">Porcentagem (%)</option>
+       <option value="fixo">Valor fixo (R$)</option>
+      </select>
+     </div>
+     <div>
+      <label class="block text-xs font-bold mb-1 text-[#786d55]">Valor</label>
+      <input class="equipe-commission-value rounded-lg border border-[#d5c9a8] bg-white px-3 py-2 text-sm w-28" type="number" min="0" step="0.01">
+     </div>
+     <button type="button" class="equipe-save-button rounded-lg px-4 py-2 text-sm font-bold bg-[#f4d35e] text-[#241a06]">Salvar</button>
+    </div>
+   </div>
+  </template>
+
+  <!-- Modelo visual da OS de entrada (recibo de recebimento do aparelho) -->
+  <div style="position:fixed; left:-9999px; top:0;">
+   <div id="os-receipt-template" style="width:600px; background:#fffdf5; font-family:'DM Sans',sans-serif; color:#1d190c;">
+    <div style="background:#0e0c08; padding:32px 36px; display:flex; align-items:center; gap:16px;">
+     <img src="logo.png" alt="" style="width:56px; height:56px; object-fit:contain;">
+     <div>
+      <p style="margin:0; font-weight:700; font-size:20px; color:#fff1a8; letter-spacing:.03em;">GALEGO CELL</p>
+      <p style="margin:2px 0 0; font-size:12px; color:#c9bd94;">Ordem de Serviço</p>
+     </div>
+    </div>
+    <div style="height:4px; background:linear-gradient(90deg,#f4d35e,#b88718);"></div>
+    <div style="padding:32px 36px;">
+     <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:20px;">
+      <p id="os-receipt-number" style="margin:0; font-weight:700; font-size:18px; color:#211b0f;"></p>
+      <p id="os-receipt-date" style="margin:0; font-size:12px; color:#9c9072; font-family:'Space Mono',monospace;"></p>
+     </div>
+     <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:18px;">
+      <tr><td style="padding:4px 0; color:#9c9072; width:35%;">Cliente</td><td id="os-receipt-customer" style="padding:4px 0; font-weight:700;"></td></tr>
+      <tr><td style="padding:4px 0; color:#9c9072;">Telefone</td><td id="os-receipt-phone" style="padding:4px 0;"></td></tr>
+      <tr><td style="padding:4px 0; color:#9c9072;">Aparelho</td><td id="os-receipt-device" style="padding:4px 0; font-weight:700;"></td></tr>
+      <tr><td style="padding:4px 0; color:#9c9072;">Garantia</td><td id="os-receipt-warranty" style="padding:4px 0;"></td></tr>
+    </table>
+     <p style="margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.05em; color:#9c9072;">DEFEITO RELATADO</p>
+     <p id="os-receipt-issue" style="margin:0 0 20px; font-size:14px; color:#4b4227; line-height:1.5;"></p>
+     <p style="margin:0; font-size:11px; color:#9c9072; line-height:1.5; border-top:1px solid #eadfbe; padding-top:14px;">
+      Este comprovante é necessário para a retirada do aparelho. A garantia cobre exclusivamente o serviço executado, não cobrindo mau uso, queda, contato com líquido ou novos defeitos.
+     </p>
+    </div>
+    <div style="border-top:1px solid #eadfbe; padding:22px 36px; display:flex; justify-content:space-between; align-items:center;">
+     <div>
+      <p style="margin:0; font-size:12px; color:#786d55;">Rua Tijuana, 19 — Lagoa Azul, Natal - RN</p>
+      <p style="margin:2px 0 0; font-size:12px; color:#786d55;">(84) 98718-1612</p>
+     </div>
+    </div>
+   </div>
+  </div>
+
   <div id="toast" class="toast fixed z-[60] bottom-5 left-1/2 rounded-xl bg-[#17140b] border border-[#7a5b18] px-5 py-3 text-sm font-bold text-[#fff1a8] shadow-2xl" role="status" aria-live="polite"></div>
 
   <!-- Modelo visual do comprovante — fica fora da tela e é "fotografado" pelo html2canvas -->
@@ -697,6 +907,7 @@
     const rolesCollection = db.collection("roles");
     const salesCollection = db.collection("sales");
     const cashSessionsCollection = db.collection("cash_sessions");
+    const serviceOrdersCollection = db.collection("service_orders");
 
     // Camada que substitui o "window.dataSdk" do Canva, usando o Firestore.
     // O custo fica separado em uma subcoleção "private" — as regras do Firestore
@@ -754,7 +965,14 @@
     let sawFirstSnapshot = false;
     let currentRole = null;
     let currentUserName = "";
+    let currentCommissionType = "percentual";
+    let currentCommissionValue = 0;
     let salesData = [];
+    let osData = [];
+    let unsubscribeOS = null;
+    let osToFinalize = null;
+    let rolesData = [];
+    let unsubscribeRoles = null;
     let unsubscribeSales = null;
     let saleToCancel = null;
     let cart = [];
@@ -795,6 +1013,14 @@
         button.classList.toggle("tab-active", button.dataset.viewTarget === view);
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function setAdminSubview(subview) {
+      document.querySelectorAll(".admin-subview").forEach(node => node.classList.remove("active"));
+      el("subview-" + subview).classList.add("active");
+      document.querySelectorAll(".subtab-button").forEach(button => {
+        button.classList.toggle("tab-active", button.dataset.subview === subview);
+      });
     }
 
     function productImage(article, url) {
@@ -893,7 +1119,12 @@
       const list = el("admin-products");
       list.replaceChildren();
 
-      products.forEach(product => {
+      const query = el("admin-product-search").value.toLowerCase().trim();
+      const filtered = products.filter(product =>
+        product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query)
+      );
+
+      filtered.forEach(product => {
         const fragment = el("admin-product-template").content.cloneNode(true);
         const article = fragment.querySelector(".admin-product");
 
@@ -925,7 +1156,7 @@
         list.appendChild(fragment);
       });
 
-      el("admin-empty").classList.toggle("hidden", products.length !== 0);
+      el("admin-empty").classList.toggle("hidden", filtered.length !== 0);
       renderMetrics();
       applyRoleUI();
       lucide.createIcons();
@@ -1023,6 +1254,7 @@
         snapshot => {
           salesData = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
           renderSalesHistory();
+          renderEquipe();
         },
         () => {}
       );
@@ -1035,6 +1267,7 @@
       }
       salesData = [];
       renderSalesHistory();
+      renderEquipe();
     }
 
     async function seedExampleProducts() {
@@ -1052,6 +1285,7 @@
     }
 
     function openForm() {
+      setAdminSubview("estoque");
       el("product-form-panel").classList.remove("hidden");
       el("product-name").focus();
     }
@@ -1450,367 +1684,232 @@
       lucide.createIcons();
     }
 
-    function receiptFileName(extension) {
-      return "comprovante-galego-cell-" + Date.now() + "." + extension;
+    // ====== ORDENS DE SERVIÇO ======
+    function osNumberLabel(os) {
+      return "OS-" + os.__backendId.slice(-6).toUpperCase();
     }
 
-    function downloadDataUrl(dataUrl, filename) {
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
+    const OS_STATUS_LABELS = {
+      aberta: "Aberta",
+      em_analise: "Em análise",
+      aguardando_peca: "Aguardando peça",
+      em_conserto: "Em conserto",
+      pronta: "Pronta para retirada",
+      entregue: "Entregue",
+      cancelada: "Cancelada"
+    };
+    const OS_STATUS_COLORS = {
+      aberta: "bg-stone-200 text-stone-700",
+      em_analise: "bg-blue-100 text-blue-700",
+      aguardando_peca: "bg-amber-100 text-amber-700",
+      em_conserto: "bg-amber-100 text-amber-700",
+      pronta: "bg-emerald-100 text-emerald-700",
+      entregue: "bg-emerald-200 text-emerald-800",
+      cancelada: "bg-red-100 text-red-700"
+    };
 
-    function downloadReceiptPng() {
-      if (!receiptCanvas) return;
-      downloadDataUrl(receiptCanvas.toDataURL("image/png"), receiptFileName("png"));
-    }
+    function renderOSList() {
+      const list = el("os-list");
+      list.replaceChildren();
+      const query = el("os-search").value.toLowerCase().trim();
 
-    function downloadReceiptPdf() {
-      if (!receiptCanvas) return;
-      const { jsPDF } = window.jspdf;
-      const widthMm = 140;
-      const heightMm = widthMm * (receiptCanvas.height / receiptCanvas.width);
-      const pdf = new jsPDF({ unit: "mm", format: [widthMm, heightMm] });
-      pdf.addImage(receiptCanvas.toDataURL("image/png"), "PNG", 0, 0, widthMm, heightMm);
-      pdf.save(receiptFileName("pdf"));
-    }
+      const filtered = osData.filter(os =>
+        !query ||
+        os.customer_name.toLowerCase().includes(query) ||
+        (os.device_brand + " " + os.device_model).toLowerCase().includes(query) ||
+        osNumberLabel(os).toLowerCase().includes(query)
+      );
 
-    async function shareReceipt() {
-      if (!receiptCanvas) return;
-      receiptCanvas.toBlob(async blob => {
-        const file = new File([blob], receiptFileName("png"), { type: "image/png" });
-        try {
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: "Comprovante Galego Cell" });
-          }
-        } catch (e) {
-          // Usuário cancelou o compartilhamento — não faz nada.
+      filtered.forEach(os => {
+        const fragment = el("os-card-template").content.cloneNode(true);
+        const article = fragment.querySelector(".os-card");
+
+        article.querySelector(".os-number").textContent = osNumberLabel(os);
+        article.querySelector(".os-customer").textContent = os.customer_name;
+        article.querySelector(".os-device").textContent = os.device_brand + " " + os.device_model + (os.device_color ? " · " + os.device_color : "");
+        article.querySelector(".os-issue").textContent = os.reported_issue;
+
+        const badge = article.querySelector(".os-status-badge");
+        badge.textContent = OS_STATUS_LABELS[os.status] || os.status;
+        badge.className = "os-status-badge rounded-full px-3 py-1 text-xs font-bold " + (OS_STATUS_COLORS[os.status] || "bg-stone-200 text-stone-700");
+
+        const total = Number(os.parts_value || 0) + Number(os.labor_value || 0);
+        article.querySelector(".os-total").textContent = money(total);
+        article.querySelector(".os-meta").textContent =
+          "Entrada: " + (os.created_at ? new Date(os.created_at).toLocaleDateString("pt-BR") : "—") +
+          " · Garantia: " + (Number(os.warranty_days) > 0 ? os.warranty_days + " dias" : "sem garantia") +
+          " · Técnico: " + (os.technician_name || "—");
+
+        const actions = article.querySelector(".os-actions");
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "rounded-lg px-3 py-2 text-xs font-bold border border-[#d5c9a8] text-[#211b0f]";
+        editBtn.textContent = "Editar";
+        editBtn.addEventListener("click", () => openOSForm(os));
+        actions.appendChild(editBtn);
+
+        const slipBtn = document.createElement("button");
+        slipBtn.type = "button";
+        slipBtn.className = "rounded-lg px-3 py-2 text-xs font-bold border border-[#d5c9a8] text-[#211b0f]";
+        slipBtn.textContent = "Comprovante de Entrada";
+        slipBtn.addEventListener("click", () => generateOSIntakeReceipt(os));
+        actions.appendChild(slipBtn);
+
+        if (os.status === "pronta") {
+          const finalizeBtn = document.createElement("button");
+          finalizeBtn.type = "button";
+          finalizeBtn.className = "rounded-lg px-3 py-2 text-xs font-bold bg-[#f4d35e] text-[#241a06]";
+          finalizeBtn.textContent = "Finalizar e Cobrar";
+          finalizeBtn.addEventListener("click", () => openFinalizeOS(os));
+          actions.appendChild(finalizeBtn);
         }
-      }, "image/png");
+
+        if (os.status === "entregue") {
+          const reopenBtn = document.createElement("button");
+          reopenBtn.type = "button";
+          reopenBtn.className = "rounded-lg px-3 py-2 text-xs font-bold border border-amber-300 text-amber-700";
+          reopenBtn.textContent = "Reabrir OS";
+          reopenBtn.addEventListener("click", () => reopenOS(os));
+          actions.appendChild(reopenBtn);
+        }
+
+        list.appendChild(fragment);
+      });
+
+      el("os-empty").classList.toggle("hidden", filtered.length !== 0);
+      lucide.createIcons();
     }
 
-    // ====== AUTENTICAÇÃO (Firebase Auth substitui a senha fixa no código) ======
-    async function requireAuth(callback) {
-      if (auth.currentUser && currentRole) {
-        callback();
+    function startOSListener() {
+      if (unsubscribeOS) return;
+      unsubscribeOS = serviceOrdersCollection.orderBy("created_at", "desc").limit(200).onSnapshot(
+        snapshot => {
+          osData = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
+          renderOSList();
+        },
+        () => {}
+      );
+    }
+
+    function stopOSListener() {
+      if (unsubscribeOS) {
+        unsubscribeOS();
+        unsubscribeOS = null;
+      }
+      osData = [];
+      renderOSList();
+    }
+
+    function openOSForm(os) {
+      el("os-form-panel").classList.remove("hidden");
+      if (os) {
+        el("os-form-title").textContent = "Editar OS — " + osNumberLabel(os);
+        el("os-editing-id").value = os.__backendId;
+        el("os-customer-name").value = os.customer_name;
+        el("os-customer-phone").value = os.customer_phone;
+        el("os-warranty").value = os.warranty_days;
+        el("os-device-brand").value = os.device_brand;
+        el("os-device-model").value = os.device_model;
+        el("os-device-color").value = os.device_color || "";
+        el("os-device-imei").value = os.device_imei || "";
+        el("os-device-password").value = os.device_password || "";
+        el("os-status").value = os.status;
+        el("os-reported-issue").value = os.reported_issue;
+        el("os-technical-report").value = os.technical_report || "";
+        el("os-parts-value").value = os.parts_value;
+        el("os-labor-value").value = os.labor_value;
+      } else {
+        el("os-form-title").textContent = "Nova Ordem de Serviço";
+        el("os-form").reset();
+        el("os-editing-id").value = "";
+        el("os-status").value = "aberta";
+        el("os-warranty").value = "90";
+      }
+      el("os-form-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function closeOSForm() {
+      el("os-form-panel").classList.add("hidden");
+      el("os-form").reset();
+      el("os-editing-id").value = "";
+    }
+
+    async function generateOSIntakeReceipt(os) {
+      el("os-receipt-number").textContent = osNumberLabel(os);
+      el("os-receipt-date").textContent = os.created_at ? new Date(os.created_at).toLocaleString("pt-BR") : new Date().toLocaleString("pt-BR");
+      el("os-receipt-customer").textContent = os.customer_name;
+      el("os-receipt-phone").textContent = os.customer_phone;
+      el("os-receipt-device").textContent = os.device_brand + " " + os.device_model + (os.device_color ? " - " + os.device_color : "");
+      el("os-receipt-warranty").textContent = Number(os.warranty_days) > 0 ? os.warranty_days + " dias (a partir da entrega)" : "Sem garantia";
+      el("os-receipt-issue").textContent = os.reported_issue;
+
+      const template = el("os-receipt-template");
+      const canvas = await html2canvas(template, { scale: 2, backgroundColor: "#fffdf5" });
+
+      receiptCanvas = canvas;
+      el("receipt-preview-img").src = canvas.toDataURL("image/png");
+      el("receipt-result-modal").classList.remove("hidden");
+      el("receipt-result-modal").classList.add("flex");
+
+      const shareButton = el("receipt-share-button");
+      if (navigator.canShare && navigator.share) {
+        shareButton.classList.remove("hidden");
+      } else {
+        shareButton.classList.add("hidden");
+      }
+      lucide.createIcons();
+    }
+
+    function openFinalizeOS(os) {
+      if (!currentCashSession || currentCashSession.status !== "aberto") {
+        toast("Abra o caixa antes de finalizar uma OS.");
         return;
       }
-
-      if (auth.currentUser && !currentRole) {
-        // Sessão já estava aberta (ex.: recarregou a página) — só falta buscar o papel do usuário.
-        try {
-          const roleSnap = await rolesCollection.doc(auth.currentUser.uid).get();
-          if (roleSnap.exists && roleSnap.data().role) {
-            currentRole = roleSnap.data().role;
-            currentUserName = roleSnap.data().name || auth.currentUser.email;
-            startSalesListener();
-            startCashierListener();
-            await refreshProducts(rawProducts);
-            callback();
-            return;
-          }
-        } catch (e) { /* segue para pedir login novamente */ }
-        await auth.signOut();
-      }
-
-      el("auth-modal").classList.remove("hidden");
-      el("auth-email").focus();
-      window.pendingAuthCallback = callback;
+      osToFinalize = os;
+      const total = Number(os.parts_value || 0) + Number(os.labor_value || 0);
+      el("finalize-os-summary").textContent = osNumberLabel(os) + " — " + os.customer_name + " · Total: " + money(total);
+      el("finalize-os-modal").classList.remove("hidden");
+      el("finalize-os-modal").classList.add("flex");
     }
 
-    function openCancelConfirm(sale) {
-      saleToCancel = sale;
-      el("manager-email").value = "";
-      el("manager-password").value = "";
-      el("cancel-confirm-error").classList.add("hidden");
-      el("cancel-confirm-modal").classList.remove("hidden");
-      el("cancel-confirm-modal").classList.add("flex");
+    function closeFinalizeOS() {
+      el("finalize-os-modal").classList.add("hidden");
+      el("finalize-os-modal").classList.remove("flex");
+      osToFinalize = null;
     }
 
-    function closeCancelConfirm() {
-      saleToCancel = null;
-      el("cancel-confirm-modal").classList.add("hidden");
-      el("cancel-confirm-modal").classList.remove("flex");
-    }
+    async function confirmFinalizeOS() {
+      if (!osToFinalize) return;
+      const paymentMethod = el("finalize-os-payment-method").value;
+      const total = Number(osToFinalize.parts_value || 0) + Number(osToFinalize.labor_value || 0);
+      const confirmButton = el("confirm-finalize-os");
+      confirmButton.disabled = true;
 
-    // Verifica a senha de um Dono/Gerente SEM derrubar a sessão de quem está logado no
-    // momento, usando uma segunda instância isolada do Firebase só para essa checagem.
-    async function verifyManagerCredentials(email, password) {
-      const secondaryApp = firebase.initializeApp(firebaseConfig, "auth-verify-" + Date.now());
       try {
-        const cred = await secondaryApp.auth().signInWithEmailAndPassword(email, password);
-        const roleSnap = await secondaryApp.firestore().collection("roles").doc(cred.user.uid).get();
-        const role = roleSnap.exists ? roleSnap.data().role : null;
-        if (role !== "owner" && role !== "gerente") {
-          throw new Error("sem-permissao");
-        }
-        return { app: secondaryApp, name: (roleSnap.data() && roleSnap.data().name) || email };
-      } catch (e) {
-        await secondaryApp.auth().signOut().catch(() => {});
-        await secondaryApp.delete().catch(() => {});
-        throw e;
-      }
-    }
+        const items = [{
+          product_id: null,
+          product_name: osNumberLabel(osToFinalize) + " — " + osToFinalize.device_brand + " " + osToFinalize.device_model,
+          quantity: 1,
+          unit_price: total,
+          subtotal: total
+        }];
 
-    async function confirmCancelSale(email, password) {
-      const manager = await verifyManagerCredentials(email, password);
-      try {
-        const sdb = manager.app.firestore();
-        const batch = sdb.batch();
-        batch.set(sdb.collection("sales").doc(saleToCancel.__backendId), {
-          status: "cancelada",
-          cancelled_at: new Date().toISOString(),
-          cancelled_by_name: manager.name
-        }, { merge: true });
-
-        const itemsToReverse = (saleToCancel.items && saleToCancel.items.length)
-          ? saleToCancel.items
-          : [{ product_id: saleToCancel.product_id, quantity: saleToCancel.quantity }];
-
-        itemsToReverse.forEach(item => {
-          batch.set(sdb.collection("products").doc(item.product_id), {
-            stock: firebase.firestore.FieldValue.increment(Number(item.quantity)),
-            sold_quantity: firebase.firestore.FieldValue.increment(-Number(item.quantity))
-          }, { merge: true });
+        const saleRef = salesCollection.doc();
+        await saleRef.set({
+          items,
+          total,
+          payment_method: paymentMethod,
+          seller_uid: auth.currentUser.uid,
+          seller_name: currentUserName,
+          status: "concluida",
+          cash_session_id: currentCashSession.__backendId,
+          linked_os_id: osToFinalize.__backendId,
+          created_at: new Date().toISOString()
         });
 
-        await batch.commit();
-      } finally {
-        await manager.app.auth().signOut().catch(() => {});
-        await manager.app.delete().catch(() => {});
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
-      dataSdk.init(handler);
-
-      el("auth-form").addEventListener("submit", async event => {
-        event.preventDefault();
-        const email = el("auth-email").value.trim();
-        const password = el("auth-password").value;
-        const errorEl = el("auth-error");
-        const authButton = el("auth-button");
-        authButton.disabled = true;
-
-        try {
-          const cred = await auth.signInWithEmailAndPassword(email, password);
-          const roleSnap = await rolesCollection.doc(cred.user.uid).get();
-
-          if (!roleSnap.exists || !roleSnap.data().role) {
-            await auth.signOut();
-            errorEl.textContent = "Esse usuário não tem permissão configurada. Fale com o dono da loja.";
-            errorEl.classList.remove("hidden");
-            return;
-          }
-
-          currentRole = roleSnap.data().role;
-          currentUserName = roleSnap.data().name || email;
-
-          el("auth-modal").classList.add("hidden");
-          el("auth-password").value = "";
-          errorEl.classList.add("hidden");
-
-          startSalesListener();
-          startCashierListener();
-          await refreshProducts(rawProducts);
-
-          if (window.pendingAuthCallback) {
-            window.pendingAuthCallback();
-            window.pendingAuthCallback = null;
-          }
-        } catch (e) {
-          errorEl.textContent = "E-mail ou senha incorretos. Tente novamente.";
-          errorEl.classList.remove("hidden");
-          el("auth-password").value = "";
-          el("auth-password").focus();
-        } finally {
-          authButton.disabled = false;
-        }
-      });
-
-      el("logout-button").addEventListener("click", async () => {
-        await auth.signOut();
-        currentRole = null;
-        currentUserName = "";
-        cart = [];
-        renderCartBadge();
-        stopSalesListener();
-        stopCashierListener();
-        await refreshProducts(rawProducts);
-        setView("store");
-        toast("Sessão encerrada.");
-      });
-
-      el("cancel-confirm-close").addEventListener("click", closeCancelConfirm);
-
-      el("cancel-confirm-form").addEventListener("submit", async event => {
-        event.preventDefault();
-        const submitButton = el("cancel-confirm-submit");
-        const errorEl = el("cancel-confirm-error");
-        submitButton.disabled = true;
-        errorEl.classList.add("hidden");
-
-        try {
-          await confirmCancelSale(el("manager-email").value.trim(), el("manager-password").value);
-          toast("Venda cancelada e estoque restaurado.");
-          closeCancelConfirm();
-        } catch (e) {
-          errorEl.textContent = "E-mail/senha inválidos ou sem permissão de Dono/Gerente.";
-          errorEl.classList.remove("hidden");
-        } finally {
-          submitButton.disabled = false;
-        }
-      });
-
-      document.querySelectorAll("[data-view-target]").forEach(button => {
-        button.addEventListener("click", () => {
-          if (button.dataset.viewTarget === "admin") {
-            requireAuth(() => setView("admin"));
-          } else {
-            setView(button.dataset.viewTarget);
-          }
-        });
-      });
-
-      el("open-maps").addEventListener("click", () => {
-        el("maps-link").click();
-      });
-
-      el("brand-button").addEventListener("click", () => setView("store"));
-      el("floating-whatsapp").addEventListener("click", () => openWhatsApp("Olá, Galego Cell! Preciso de atendimento."));
-      el("hero-whatsapp").addEventListener("click", () => openWhatsApp("Olá, Galego Cell! Gostaria de falar com um especialista."));
-      el("product-search").addEventListener("input", renderStore);
-      el("category-filter").addEventListener("change", renderStore);
-      el("new-product-button").addEventListener("click", openForm);
-      el("close-form-button").addEventListener("click", closeForm);
-      el("cancel-form-button").addEventListener("click", closeForm);
-      el("close-sale-modal").addEventListener("click", closeSale);
-      el("cancel-sale-button").addEventListener("click", closeSale);
-      el("close-receipt-result").addEventListener("click", () => {
-        el("receipt-result-modal").classList.add("hidden");
-        el("receipt-result-modal").classList.remove("flex");
-      });
-      el("receipt-png-button").addEventListener("click", downloadReceiptPng);
-      el("receipt-pdf-button").addEventListener("click", downloadReceiptPdf);
-      el("receipt-share-button").addEventListener("click", shareReceipt);
-
-      el("product-form").addEventListener("submit", async event => {
-        event.preventDefault();
-
-        const saveButton = el("save-product-button");
-        saveButton.disabled = true;
-
-        const id = el("editing-id").value;
-        const existing = products.find(product => product.__backendId === id);
-
-        const record = {
-          name: el("product-name").value.trim(),
-          description: el("product-description").value.trim(),
-          price: Number(el("product-price").value),
-          cost: Number(el("product-cost").value),
-          stock: Number(el("product-stock").value),
-          category: el("product-category").value,
-          image_url: el("product-image-url").value.trim(),
-          status: "ativo",
-          sold_quantity: existing ? Number(existing.sold_quantity || 0) : 0,
-          created_at: existing ? existing.created_at : new Date().toISOString()
-        };
-
-        let result;
-        if (existing) {
-          result = await dataSdk.update({ __backendId: existing.__backendId, ...record });
-        } else {
-          if (products.length >= 999) {
-            toast("Limite de 999 produtos atingido.");
-            saveButton.disabled = false;
-            return;
-          }
-          result = await dataSdk.create(record);
-        }
-
-        saveButton.disabled = false;
-
-        if (result.isOk) {
-          toast(existing ? "Produto atualizado com sucesso." : "Produto cadastrado com sucesso.");
-          closeForm();
-        } else {
-          toast("Não foi possível salvar o produto.");
-        }
-      });
-
-      el("sale-form").addEventListener("submit", event => {
-        event.preventDefault();
-        if (!activeSale) return;
-
-        const quantity = Number(el("sale-quantity").value);
-        const alreadyInCart = cart.filter(item => item.product_id === activeSale.__backendId).reduce((sum, item) => sum + item.quantity, 0);
-
-        if (quantity < 1 || (quantity + alreadyInCart) > Number(activeSale.stock)) {
-          toast("Informe uma quantidade disponível em estoque.");
-          return;
-        }
-
-        addToCart(activeSale, quantity);
-        closeSale();
-        toast("Adicionado ao carrinho.");
-      });
-
-      el("cart-button").addEventListener("click", openCartModal);
-      el("close-cart-modal").addEventListener("click", closeCartModal);
-      el("checkout-cart-button").addEventListener("click", checkoutCart);
-
-      el("open-cashier-button").addEventListener("click", openOpenCashierModal);
-      el("cancel-open-cashier").addEventListener("click", closeOpenCashierModal);
-      el("open-cashier-form").addEventListener("submit", async event => {
-        event.preventDefault();
-        const amount = Number(el("opening-amount").value);
-        const submitButton = event.target.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        try {
-          await openCashier(amount);
-          closeOpenCashierModal();
-          toast("Caixa aberto!");
-        } catch (e) {
-          toast("Não foi possível abrir o caixa.");
-        } finally {
-          submitButton.disabled = false;
-        }
-      });
-
-      el("close-cashier-button").addEventListener("click", openCloseCashierModal);
-      el("cancel-close-cashier").addEventListener("click", closeCloseCashierModal);
-      el("counted-amount").addEventListener("input", () => {
-        const diffEl = el("close-cashier-difference");
-        if (el("counted-amount").value === "") {
-          diffEl.textContent = "";
-          return;
-        }
-        const expected = Number(el("close-cashier-modal").dataset.expected || 0);
-        const counted = Number(el("counted-amount").value || 0);
-        const diff = counted - expected;
-        diffEl.textContent = diff === 0 ? "Confere certinho." : (diff > 0 ? "Sobra de " + money(diff) : "Falta de " + money(Math.abs(diff)));
-        diffEl.className = "text-sm font-bold mb-6 " + (diff === 0 ? "text-emerald-700" : diff > 0 ? "text-amber-600" : "text-red-600");
-      });
-      el("close-cashier-form").addEventListener("submit", async event => {
-        event.preventDefault();
-        const counted = Number(el("counted-amount").value);
-        const submitButton = event.target.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        try {
-          await closeCashier(counted);
-          closeCloseCashierModal();
-          toast("Caixa fechado!");
-        } catch (e) {
-          toast("Não foi possível fechar o caixa.");
-        } finally {
-          submitButton.disabled = false;
-        }
-      });
-    });
-  </script>
- </body>
-</html>
+        await serviceOrdersCollection.doc(osToFinalize.__backendId).set({
+          status: "entregue",
+          delivered_at: new Date().toISOString(),
+          linked_sale_id: saleRef.id,
+          payment_meth
