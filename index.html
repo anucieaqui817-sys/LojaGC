@@ -1,0 +1,1861 @@
+<!doctype html>
+<html lang="pt-BR">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galego Cell — Loja &amp; Gestão</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase (substitui o data_sdk.js proprietário do Canva) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+  <style>
+    :root {
+      --void: #080807;
+      --obsidian: #10100d;
+      --gold: #f4d35e;
+      --gold-bright: #fff1a8;
+      --gold-deep: #b88718;
+      --ink: #1d190c;
+      --muted: #9b947d;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--void); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      background: #f6f1df;
+    }
+
+    .mono { font-family: "Space Mono", monospace; }
+
+    .gold-grid {
+      background-image:
+        linear-gradient(rgba(244,211,94,.11) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244,211,94,.11) 1px, transparent 1px);
+      background-size: 34px 34px;
+    }
+
+    .hero-shade::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(8,8,7,.98) 2%, rgba(8,8,7,.78) 47%, rgba(8,8,7,.28));
+    }
+
+    .glow-ring {
+      box-shadow: 0 0 0 1px rgba(244,211,94,.46), 0 0 18px rgba(244,211,94,.45), 0 0 55px rgba(184,135,24,.25);
+    }
+
+    .gold-button {
+      box-shadow: 0 0 22px rgba(244,211,94,.25), inset 0 1px 0 rgba(255,255,255,.42);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .gold-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(244,211,94,.48), inset 0 1px 0 rgba(255,255,255,.55);
+    }
+
+    .tab-active {
+      background: linear-gradient(135deg, #fff1a8, #d69b25) !important;
+      color: #211807 !important;
+      box-shadow: 0 0 18px rgba(244,211,94,.35);
+    }
+
+    .view { display: none; }
+    .view.active { display: block; animation: rise .35s ease both; }
+
+    .admin-subview { display: none; }
+    .admin-subview.active { display: block; animation: rise .35s ease both; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .product-card {
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(184,135,24,.55);
+      box-shadow: 0 22px 42px rgba(38,26,4,.15);
+    }
+
+    .toast {
+      transform: translate(-50%, 120px);
+      opacity: 0;
+      transition: .3s ease;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    .modal-backdrop {
+      background: rgba(4,4,3,.82);
+      backdrop-filter: blur(9px);
+    }
+
+    input, select, textarea { outline: none; }
+    input:focus, select:focus, textarea:focus {
+      border-color: #d69b25 !important;
+      box-shadow: 0 0 0 3px rgba(244,211,94,.22);
+    }
+
+    .logo-shell {
+      background: radial-gradient(circle at 50% 35%, rgba(255,241,168,.24), transparent 62%);
+    }
+  </style>
+ </head>
+ <body class="w-full min-h-screen">
+  <header class="sticky top-0 z-30 border-b border-[#d69b25]/20 bg-[#080807]/95 backdrop-blur">
+   <div class="w-full max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="min-h-[76px] flex items-center justify-between gap-4">
+     <button id="brand-button" type="button" class="flex items-center gap-3 text-left" aria-label="Ir para a loja">
+      <div class="logo-shell glow-ring w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-black">
+       <img src="logo.png" alt="Galego Cell" class="w-full h-full object-contain p-1">
+      </div>
+      <div>
+       <p class="font-bold leading-tight text-[#fff1a8]">GALEGO CELL</p>
+       <p class="mt-0.5 text-xs text-[#c9bd94]">Tecnologia com presença</p>
+      </div>
+     </button>
+     <nav aria-label="Navegação principal" class="flex items-center gap-2">
+      <button type="button" data-view-target="store" class="tab-button rounded-lg px-3 sm:px-4 py-2 font-bold text-[#f4d35e]">Loja</button>
+      <button type="button" data-view-target="admin" class="tab-button rounded-lg px-3 sm:px-4 py-2 font-bold text-[#f4d35e]">Painel</button>
+     </nav>
+    </div>
+   </div>
+  </header>
+  <main>
+   <section id="store-view" class="view active" aria-label="Loja virtual">
+    <section class="hero-shade relative overflow-hidden bg-[#080807]">
+     <img src="https://images.pexels.com/photos/17330220/pexels-photo-17330220.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" class="absolute inset-0 w-full h-full object-cover">
+     <div class="gold-grid absolute inset-0 z-10"></div>
+     <div class="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+      <div class="max-w-2xl">
+       <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-bold mb-6 bg-[#fff1a8]/10 text-[#fff1a8] border border-[#fff1a8]/30">
+        <i data-lucide="sparkles" class="w-4 h-4"></i> <span>TECNOLOGIA COM ESTILO</span>
+       </div>
+       <div class="flex items-center gap-4 mb-6">
+        <div class="logo-shell rounded-2xl overflow-hidden bg-black/50 glow-ring w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
+         <img src="logo.png" alt="Galego Cell" class="w-full h-full object-contain p-2">
+        </div>
+        <div class="h-px flex-1 max-w-36 bg-gradient-to-r from-[#f4d35e] to-transparent"></div>
+       </div>
+       <h1 class="font-bold tracking-tight leading-[.98] max-w-xl text-white text-4xl sm:text-5xl">Sua tecnologia merece brilho próprio.</h1>
+       <p class="mt-5 max-w-xl text-[#d8cfae]">Celulares, acessórios e assistência técnica com atendimento rápido, confiança e o padrão premium da Galego Cell.</p>
+       <button id="hero-whatsapp" type="button" aria-label="Falar no WhatsApp" class="gold-button mt-8 inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#f4d35e] text-[#241a06]">
+        <i data-lucide="message-circle" class="w-6 h-6"></i>
+       </button>
+      </div>
+     </div>
+    </section>
+    <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-10">
+     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-7">
+      <div>
+       <p class="mono font-bold uppercase tracking-[.18em] text-[#b88718]">CATÁLOGO ONLINE</p>
+       <h2 class="font-bold mt-2 text-2xl sm:text-3xl text-[#211b0f]">Encontre seu próximo upgrade</h2>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+       <div class="relative">
+        <label class="sr-only" for="product-search">Pesquisar produtos</label>
+        <i data-lucide="search" class="absolute left-3 top-3.5 w-4 h-4 text-stone-400"></i>
+        <input id="product-search" type="search" placeholder="Buscar produto..." class="w-full sm:w-64 rounded-xl border border-[#d5c9a8] bg-white px-10 py-3 text-sm">
+       </div>
+       <div>
+        <label class="sr-only" for="category-filter">Filtrar por categoria</label>
+        <select id="category-filter" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 text-sm font-semibold">
+         <option value="all">Todas as categorias</option>
+         <option value="Celulares">Celulares</option>
+         <option value="Acessórios">Acessórios</option>
+         <option value="Assistência técnica">Assistência técnica</option>
+        </select>
+       </div>
+      </div>
+     </div>
+     <div id="store-products" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+     <div id="store-empty" class="hidden rounded-2xl border border-dashed border-[#c9b887] bg-[#fffcf1] p-12 text-center">
+      <i data-lucide="package-search" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+      <p class="font-semibold mt-4 text-[#786d55]">Nenhum produto encontrado com esses filtros.</p>
+     </div>
+    </section>
+    <section class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-10">
+     <div class="rounded-2xl overflow-hidden bg-white border border-[#e3d7b5] shadow-sm">
+      <div class="p-5 sm:p-6 border-b border-[#eadfbe]">
+       <h2 class="font-bold text-xl text-[#211b0f]">Onde Estamos</h2>
+      </div>
+      <div class="p-5 sm:p-6 grid md:grid-cols-2 gap-8">
+       <div class="space-y-5">
+        <article>
+         <div class="flex items-start gap-3">
+          <i data-lucide="map-pin" class="w-5 h-5 text-[#f4d35e] flex-shrink-0 mt-0.5"></i>
+          <div class="min-w-0">
+           <p class="text-xs mono text-[#9c9072] font-bold">ENDEREÇO</p>
+           <p class="font-bold mt-1 text-[#211b0f]">Rua Tijuana, 19</p>
+           <p class="text-sm mt-1 text-[#786d55]">Lagoa Azul, Natal - RN, 59139-350</p>
+          </div>
+         </div>
+        </article>
+        <article>
+         <div class="flex items-start gap-3">
+          <i data-lucide="clock" class="w-5 h-5 text-[#f4d35e] flex-shrink-0 mt-0.5"></i>
+          <div class="min-w-0">
+           <p class="text-xs mono text-[#9c9072] font-bold">HORÁRIO</p>
+           <p class="font-bold mt-1 text-[#211b0f]">Seg, Ter, Sex: 8h–18h · Qua, Qui: 8h–20h · Sáb: 8h–16h</p>
+           <p class="text-sm mt-1 text-[#786d55]">Domingo: fechado</p>
+          </div>
+         </div>
+        </article>
+        <article>
+         <div class="flex items-start gap-3">
+          <i data-lucide="phone" class="w-5 h-5 text-[#f4d35e] flex-shrink-0 mt-0.5"></i>
+          <div class="min-w-0">
+           <p class="text-xs mono text-[#9c9072] font-bold">CONTATO</p>
+           <a href="tel:+5584987181612" class="font-bold mt-1 hover:text-[#d69b25] transition-colors text-[#211b0f] block">(84) 98718-1612</a>
+          </div>
+         </div>
+        </article>
+        <article>
+         <div class="flex items-start gap-3">
+          <i data-lucide="star" class="w-5 h-5 text-[#f4d35e] flex-shrink-0 mt-0.5"></i>
+          <div class="min-w-0">
+           <p class="text-xs mono text-[#9c9072] font-bold">AVALIAÇÃO</p>
+           <p class="font-bold mt-1 text-[#211b0f]">5.0 de 5</p>
+           <p class="text-sm mt-1 text-[#786d55]">14 avaliações no Google</p>
+          </div>
+         </div>
+        </article>
+       </div>
+       <div class="relative">
+        <a id="maps-link" href="https://maps.google.com/?q=Rua+Tijuana,+19+-+Lagoa+Azul,+Natal,+RN" target="_blank" rel="noopener noreferrer" class="block rounded-xl overflow-hidden border border-[#d5c9a8] hover:border-[#d69b25] transition-colors h-full min-h-[220px]">
+         <iframe title="Localização da Galego Cell no Google Maps" class="w-full h-full min-h-[220px]" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Rua+Tijuana,+19+-+Lagoa+Azul,+Natal,+RN&output=embed"></iframe>
+        </a>
+        <button type="button" id="open-maps" class="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-lg bg-[#fff1a8] px-4 py-2 text-sm font-bold text-[#241a06] hover:bg-[#e3bb3e] transition-colors shadow-lg">
+         <i data-lucide="map" class="w-4 h-4"></i> Ver no Google Maps
+        </button>
+       </div>
+      </div>
+     </div>
+    </section>
+   </section>
+   <section id="admin-view" class="view" aria-label="Painel de gestão">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+     <div class="flex items-center justify-between gap-3 mb-6 text-sm">
+      <p class="text-[#786d55]">Logado como <span id="current-user-name" class="font-bold text-[#211b0f]"></span></p>
+      <button id="logout-button" type="button" class="text-[#b88718] font-bold underline">Sair</button>
+     </div>
+     <div id="cashier-status-bar" class="rounded-2xl p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-[#e3d7b5]">
+      <div class="flex items-center gap-3">
+       <i data-lucide="wallet" class="w-5 h-5 text-[#b88718]"></i>
+       <p id="cashier-status-text" class="text-sm font-bold text-[#211b0f]">Verificando caixa...</p>
+      </div>
+      <div class="flex gap-2">
+       <button id="open-cashier-button" type="button" class="hidden rounded-lg px-4 py-2 text-sm font-bold bg-[#f4d35e] text-[#241a06]">Abrir Caixa</button>
+       <button id="close-cashier-button" type="button" class="hidden rounded-lg px-4 py-2 text-sm font-bold border border-red-300 text-red-600">Fechar Caixa</button>
+      </div>
+     </div>
+     <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-8">
+      <div>
+       <p class="mono font-bold uppercase tracking-[.18em] text-[#b88718]">PAINEL INTERNO</p>
+       <h1 class="font-bold mt-2 text-2xl sm:text-3xl text-[#211b0f]">Gestão da Loja</h1>
+       <p class="mt-2 text-[#786d55]">Cadastre produtos, controle estoque e acompanhe vendas.</p>
+      </div>
+      <div class="flex gap-3">
+       <button id="cart-button" type="button" class="relative inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold border-2 border-[#211b0f] text-[#211b0f]">
+        <i data-lucide="shopping-cart" class="w-5 h-5"></i> <span>Carrinho</span>
+        <span id="cart-badge" class="hidden absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center">0</span>
+       </button>
+       <button id="new-product-button" type="button" class="gold-button inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold bg-[#f4d35e] text-[#241a06]">
+        <i data-lucide="plus" class="w-5 h-5"></i> <span>Novo Produto</span>
+       </button>
+      </div>
+     </div>
+     <section aria-label="Resumo financeiro" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
+      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+       <div class="flex justify-between items-start"><i data-lucide="trending-up" class="w-5 h-5 text-[#f4d35e]"></i> <span class="mono text-xs text-[#a99d7f]">VENDAS</span></div>
+       <p id="metric-revenue" class="mono mt-6 text-2xl font-bold">R$ 0,00</p>
+       <p class="mt-2 text-sm text-[#786d55]">Receita total</p>
+      </article>
+      <article id="metric-cost-card" class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+       <div class="flex justify-between items-start"><i data-lucide="wallet-cards" class="w-5 h-5 text-[#b88718]"></i> <span class="mono text-xs text-[#82785f]">CUSTO</span></div>
+       <p id="metric-cost" class="mono mt-6 text-2xl font-bold">R$ 0,00</p>
+       <p class="mt-2 text-sm text-[#786d55]">Valor em estoque</p>
+      </article>
+      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+       <div class="flex justify-between items-start"><i data-lucide="boxes" class="w-5 h-5 text-[#8d6512]"></i> <span class="mono text-xs text-[#82785f]">ESTOQUE</span></div>
+       <p id="metric-stock" class="mono mt-6 text-2xl font-bold">0</p>
+       <p class="mt-2 text-sm text-[#786d55]">Unidades em estoque</p>
+      </article>
+      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+       <div class="flex justify-between items-start"><i data-lucide="shopping-bag" class="w-5 h-5 text-[#9a6d10]"></i> <span class="mono text-xs text-[#82785f]">SAÍDAS</span></div>
+       <p id="metric-units" class="mono mt-6 text-2xl font-bold">0</p>
+       <p class="mt-2 text-sm text-[#786d55]">Unidades vendidas</p>
+      </article>
+     </section>
+     <nav aria-label="Seções do painel" class="flex gap-2 mb-6 overflow-x-auto pb-1">
+      <button type="button" data-subview="estoque" class="subtab-button tab-active whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Estoque</button>
+      <button type="button" data-subview="vendas" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Vendas</button>
+      <button type="button" data-subview="caixa" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Caixa</button>
+      <button type="button" data-subview="os" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Ordens de Serviço</button>
+      <button type="button" data-subview="equipe" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Equipe</button>
+     </nav>
+     <div id="subview-estoque" class="admin-subview active">
+     <section id="product-form-panel" class="hidden rounded-2xl bg-[#15130d] p-5 sm:p-7 mb-8 shadow-2xl">
+      <div class="flex items-center justify-between gap-4 mb-6">
+       <div>
+        <h2 class="font-bold text-[#fff1a8]">Cadastrar / Editar Produto</h2>
+        <p class="mt-1 text-sm text-[#c9bd94]">Preencha os dados do produto abaixo.</p>
+       </div>
+       <button id="close-form-button" type="button" class="p-2 rounded-lg text-[#f4d35e] hover:bg-white/10" aria-label="Fechar cadastro"><i data-lucide="x"></i></button>
+      </div>
+      <form id="product-form">
+       <input id="editing-id" type="hidden">
+       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-name">Nome do produto</label>
+         <input id="product-name" required maxlength="80" type="text" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-category">Categoria</label>
+         <select id="product-category" required class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white">
+          <option value="Celulares">Celulares</option>
+          <option value="Acessórios">Acessórios</option>
+          <option value="Assistência técnica">Assistência técnica</option>
+         </select></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-stock">Estoque</label>
+         <input id="product-stock" required min="0" step="1" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-price">Preço de venda (R$)</label>
+         <input id="product-price" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div id="product-cost-field"><label class="block font-bold mb-2 text-[#fff1a8]" for="product-cost">Preço de custo (R$)</label>
+         <input id="product-cost" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-image-url">URL da imagem (opcional)</label>
+         <input id="product-image-url" maxlength="300" type="url" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
+        <div class="md:col-span-2 lg:col-span-3"><label class="block font-bold mb-2 text-[#fff1a8]" for="product-description">Descrição</label>
+         <textarea id="product-description" required maxlength="240" rows="3" class="w-full resize-none rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></textarea></div>
+       </div>
+       <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6">
+        <button id="cancel-form-button" type="button" class="rounded-xl px-5 py-3 font-bold border border-[#5d522f] text-[#fff1a8]">Cancelar</button>
+        <button id="save-product-button" type="submit" class="gold-button rounded-xl px-5 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Salvar Produto</button>
+       </div>
+      </form>
+     </section>
+     <section class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm">
+      <div class="p-5 sm:p-6 border-b border-[#eadfbe] flex items-center justify-between gap-4">
+       <div>
+        <h2 class="font-bold text-[#211b0f]">Estoque Atual</h2>
+        <p class="mt-1 text-sm text-[#786d55]">Todos os produtos cadastrados</p>
+       </div>
+       <span id="inventory-count" class="mono text-xs rounded-full bg-[#fff4c7] px-3 py-1.5 text-[#75500b]">0 ITENS</span>
+      </div>
+      <div class="p-5 sm:p-6 pb-0 relative">
+       <label class="sr-only" for="admin-product-search">Buscar produto no estoque</label>
+       <i data-lucide="search" class="absolute left-8 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400"></i>
+       <input id="admin-product-search" type="search" placeholder="Buscar produto ou serviço..." class="w-full rounded-xl border border-[#d5c9a8] bg-white pl-10 pr-4 py-3 text-sm">
+      </div>
+      <div id="admin-products" class="divide-y divide-[#f0e8d2]"></div>
+      <div id="admin-empty" class="p-12 text-center">
+       <i data-lucide="package-plus" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+       <p class="font-semibold mt-4 text-[#786d55]">Nenhum produto cadastrado ainda.</p>
+      </div>
+     </section>
+     </div>
+     <div id="subview-vendas" class="admin-subview">
+     <section class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm mt-8">
+      <div class="p-5 sm:p-6 border-b border-[#eadfbe] flex items-center justify-between gap-4">
+       <div>
+        <h2 class="font-bold text-[#211b0f]">Histórico de Vendas</h2>
+        <p class="mt-1 text-sm text-[#786d55]">Últimas vendas registradas, com forma de pagamento e vendedor</p>
+       </div>
+      </div>
+      <div id="sales-history" class="divide-y divide-[#f0e8d2]"></div>
+      <div id="sales-empty" class="p-12 text-center">
+       <i data-lucide="receipt" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+       <p class="font-semibold mt-4 text-[#786d55]">Nenhuma venda registrada ainda.</p>
+      </div>
+     </section>
+     </div>
+     <div id="subview-caixa" class="admin-subview">
+     <section class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm mt-8">
+      <div class="p-5 sm:p-6 border-b border-[#eadfbe]">
+       <h2 class="font-bold text-[#211b0f]">Histórico de Caixa</h2>
+       <p class="mt-1 text-sm text-[#786d55]">Aberturas e fechamentos, com conferência de valores</p>
+      </div>
+      <div id="cashier-history" class="divide-y divide-[#f0e8d2]"></div>
+      <div id="cashier-history-empty" class="p-12 text-center">
+       <i data-lucide="wallet" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+       <p class="font-semibold mt-4 text-[#786d55]">Nenhum caixa registrado ainda.</p>
+      </div>
+     </section>
+     </div>
+     <div id="subview-os" class="admin-subview">
+      <p class="text-sm text-[#786d55]">(OS entra aqui na Parte 2)</p>
+     </div>
+     <div id="subview-equipe" class="admin-subview">
+      <p class="text-sm text-[#786d55]">(Equipe entra aqui na Parte 3)</p>
+     </div>
+    </div>
+   </section>
+  </main>
+  <button id="floating-whatsapp" type="button" class="gold-button fixed z-40 right-5 bottom-5 w-14 h-14 rounded-full flex items-center justify-center shadow-xl bg-[#f4d35e] text-[#241a06]" aria-label="Falar com a Galego Cell pelo WhatsApp"><i data-lucide="message-circle" class="w-7 h-7"></i></button>
+  <div id="sale-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
+   <section class="w-full max-w-md rounded-2xl bg-[#fffdf5] p-6 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="sale-modal-title">
+    <div class="flex justify-between gap-4">
+     <div>
+      <p class="mono font-bold text-xs text-[#b88718]">ADICIONAR AO CARRINHO</p>
+      <h2 id="sale-modal-title" class="font-bold mt-2 text-xl text-[#211b0f]">Adicionar Produto</h2>
+     </div>
+     <button id="close-sale-modal" type="button" class="p-2 h-fit rounded-lg hover:bg-[#f5eedb]" aria-label="Fechar"><i data-lucide="x"></i></button>
+    </div>
+    <p id="sale-product-name" class="font-bold text-[#2b2414] mt-6"></p>
+    <p id="sale-stock-info" class="text-sm text-[#81755a] mt-1"></p>
+    <form id="sale-form" class="mt-6">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="sale-quantity">Quantidade</label>
+     <input id="sale-quantity" required min="1" step="1" type="number" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3">
+     <div class="flex gap-3 mt-6">
+      <button id="cancel-sale-button" type="button" class="flex-1 rounded-xl px-4 py-3 font-bold border border-[#d5c9a8] text-[#211b0f]">Cancelar</button>
+      <button id="confirm-sale-button" type="submit" class="gold-button flex-1 rounded-xl px-4 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Adicionar ao Carrinho</button>
+     </div>
+    </form>
+   </section>
+  </div>
+
+  <div id="cart-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
+   <section class="w-full max-w-lg rounded-2xl bg-[#fffdf5] p-6 shadow-2xl max-h-[90vh] overflow-y-auto" aria-modal="true" role="dialog" aria-labelledby="cart-modal-title">
+    <div class="flex justify-between gap-4 mb-4">
+     <h2 id="cart-modal-title" class="font-bold text-xl text-[#211b0f]">Carrinho de Venda</h2>
+     <button id="close-cart-modal" type="button" class="p-2 h-fit rounded-lg hover:bg-[#f5eedb]" aria-label="Fechar"><i data-lucide="x"></i></button>
+    </div>
+    <div id="cart-items" class="space-y-3 mb-4"></div>
+    <div id="cart-empty" class="hidden text-center py-8">
+     <i data-lucide="shopping-cart" class="w-10 h-10 mx-auto text-[#c9b887]"></i>
+     <p class="text-sm text-[#786d55] mt-3">Carrinho vazio. Adicione produtos pelo estoque.</p>
+    </div>
+    <div class="border-t border-[#eadfbe] pt-4">
+     <div class="flex justify-between items-center mb-4">
+      <span class="font-bold text-[#211b0f]">Total</span>
+      <span id="cart-total" class="mono font-bold text-2xl text-[#211b0f]">R$ 0,00</span>
+     </div>
+     <label class="block font-bold mb-2 text-[#211b0f]" for="cart-payment-method">Forma de pagamento</label>
+     <select id="cart-payment-method" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-4">
+      <option value="dinheiro">Dinheiro</option>
+      <option value="pix">Pix</option>
+      <option value="credito">Cartão de Crédito</option>
+      <option value="debito">Cartão de Débito</option>
+     </select>
+     <button id="checkout-cart-button" type="button" class="gold-button w-full rounded-xl px-4 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Finalizar Venda</button>
+    </div>
+   </section>
+  </div>
+
+  <template id="cart-item-template">
+   <div class="cart-item flex items-center gap-3 rounded-xl border border-[#e3d7b5] p-3">
+    <div class="min-w-0 flex-1">
+     <p class="cart-item-name font-bold text-sm text-[#211b0f] truncate"></p>
+     <p class="cart-item-price text-xs text-[#9c9072] mono"></p>
+    </div>
+    <div class="flex items-center gap-2">
+     <button type="button" class="cart-item-minus w-7 h-7 rounded-lg border border-[#d5c9a8] font-bold">−</button>
+     <span class="cart-item-qty w-6 text-center font-bold text-sm"></span>
+     <button type="button" class="cart-item-plus w-7 h-7 rounded-lg border border-[#d5c9a8] font-bold">+</button>
+    </div>
+    <p class="cart-item-subtotal mono font-bold text-sm w-20 text-right"></p>
+    <button type="button" class="cart-item-remove p-1.5 rounded-lg text-red-600 hover:bg-red-50" aria-label="Remover"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+   </div>
+  </template>
+
+  <div id="open-cashier-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
+   <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-8 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="open-cashier-title">
+    <div class="text-center mb-6">
+     <div class="w-14 h-14 rounded-2xl overflow-hidden mx-auto mb-4 bg-[#fff4c7] flex items-center justify-center">
+      <i data-lucide="wallet" class="w-7 h-7 text-[#b88718]"></i>
+     </div>
+     <h1 id="open-cashier-title" class="font-bold text-xl text-[#211b0f]">Abrir Caixa</h1>
+     <p class="mt-2 text-sm text-[#786d55]">Informe o valor em dinheiro que está no caixa agora.</p>
+    </div>
+    <form id="open-cashier-form">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="opening-amount">Valor inicial (R$)</label>
+     <input id="opening-amount" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-6">
+     <div class="flex gap-3">
+      <button id="cancel-open-cashier" type="button" class="flex-1 rounded-xl px-4 py-3 font-bold border border-[#d5c9a8] text-[#211b0f]">Cancelar</button>
+      <button type="submit" class="flex-1 gold-button rounded-xl px-4 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Abrir Caixa</button>
+     </div>
+    </form>
+   </section>
+  </div>
+
+  <div id="close-cashier-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
+   <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-8 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="close-cashier-title">
+    <div class="text-center mb-6">
+     <div class="w-14 h-14 rounded-2xl overflow-hidden mx-auto mb-4 bg-[#fff4c7] flex items-center justify-center">
+      <i data-lucide="wallet" class="w-7 h-7 text-[#b88718]"></i>
+     </div>
+     <h1 id="close-cashier-title" class="font-bold text-xl text-[#211b0f]">Fechar Caixa</h1>
+     <p id="close-cashier-summary" class="mt-2 text-sm text-[#786d55]"></p>
+    </div>
+    <form id="close-cashier-form">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="counted-amount">Valor contado no caixa (R$)</label>
+     <input id="counted-amount" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-3">
+     <p id="close-cashier-difference" class="text-sm font-bold mb-6"></p>
+     <div class="flex gap-3">
+      <button id="cancel-close-cashier" type="button" class="flex-1 rounded-xl px-4 py-3 font-bold border border-[#d5c9a8] text-[#211b0f]">Cancelar</button>
+      <button type="submit" class="flex-1 rounded-xl px-4 py-3 font-bold bg-red-600 text-white">Fechar Caixa</button>
+     </div>
+    </form>
+   </section>
+  </div>
+
+  <template id="cashier-history-template">
+   <article class="cashier-history-row p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-3">
+    <div class="min-w-0 flex-1">
+     <div class="flex flex-wrap items-center gap-2">
+      <span class="cashier-history-status rounded-full px-2.5 py-1 text-[10px] font-bold"></span>
+     </div>
+     <p class="cashier-history-meta text-xs text-[#9c9072] mt-1"></p>
+    </div>
+    <div class="grid grid-cols-3 gap-4 text-left lg:text-right">
+     <div><p class="mono text-[10px] text-[#9c9072]">ABERTURA</p><p class="cashier-history-opening mono text-sm font-bold"></p></div>
+     <div><p class="mono text-[10px] text-[#9c9072]">CONTADO</p><p class="cashier-history-counted mono text-sm font-bold"></p></div>
+     <div><p class="mono text-[10px] text-[#9c9072]">DIFERENÇA</p><p class="cashier-history-diff mono text-sm font-bold"></p></div>
+    </div>
+   </article>
+  </template>
+  <div id="toast" class="toast fixed z-[60] bottom-5 left-1/2 rounded-xl bg-[#17140b] border border-[#7a5b18] px-5 py-3 text-sm font-bold text-[#fff1a8] shadow-2xl" role="status" aria-live="polite"></div>
+
+  <!-- Modelo visual do comprovante — fica fora da tela e é "fotografado" pelo html2canvas -->
+  <div style="position:fixed; left:-9999px; top:0;">
+   <div id="receipt-template" style="width:600px; background:#fffdf5; font-family:'DM Sans',sans-serif; color:#1d190c;">
+    <div style="background:#0e0c08; padding:32px 36px; display:flex; align-items:center; gap:16px;">
+     <img src="logo.png" alt="" style="width:56px; height:56px; object-fit:contain;">
+     <div>
+      <p style="margin:0; font-weight:700; font-size:20px; color:#fff1a8; letter-spacing:.03em;">GALEGO CELL</p>
+      <p style="margin:2px 0 0; font-size:12px; color:#c9bd94;">Tecnologia com presença</p>
+     </div>
+    </div>
+    <div style="height:4px; background:linear-gradient(90deg,#f4d35e,#b88718);"></div>
+    <div style="padding:32px 36px;">
+     <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:24px;">
+      <p style="margin:0; font-weight:700; font-size:18px; letter-spacing:.06em; color:#211b0f;">COMPROVANTE DE VENDA</p>
+      <p id="receipt-date" style="margin:0; font-size:12px; color:#9c9072; font-family:'Space Mono',monospace;"></p>
+     </div>
+     <table style="width:100%; border-collapse:collapse; font-size:14px;">
+      <thead>
+       <tr style="border-bottom:2px solid #eadfbe;">
+        <th style="text-align:left; padding:0 0 10px; color:#9c9072; font-weight:700; font-size:11px; letter-spacing:.05em;">PRODUTO</th>
+        <th style="text-align:center; padding:0 0 10px; color:#9c9072; font-weight:700; font-size:11px; letter-spacing:.05em;">QTD</th>
+        <th style="text-align:right; padding:0 0 10px; color:#9c9072; font-weight:700; font-size:11px; letter-spacing:.05em;">VALOR UNIT.</th>
+        <th style="text-align:right; padding:0 0 10px; color:#9c9072; font-weight:700; font-size:11px; letter-spacing:.05em;">SUBTOTAL</th>
+       </tr>
+      </thead>
+      <tbody id="receipt-items-body"></tbody>
+     </table>
+     <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:12px; color:#786d55;">
+      <span>Forma de pagamento: <strong id="receipt-payment" style="color:#211b0f;"></strong></span>
+      <span>Atendido por: <strong id="receipt-seller" style="color:#211b0f;"></strong></span>
+     </div>
+     <div style="display:flex; justify-content:flex-end; margin-top:18px;">
+      <div style="background:linear-gradient(135deg,#fff1a8,#d69b25); border-radius:14px; padding:14px 26px; text-align:right;">
+       <p style="margin:0; font-size:11px; font-weight:700; letter-spacing:.08em; color:#3a2c06;">TOTAL</p>
+       <p id="receipt-total" style="margin:2px 0 0; font-size:26px; font-weight:700; color:#211807; font-family:'Space Mono',monospace;"></p>
+      </div>
+     </div>
+    </div>
+    <div style="border-top:1px solid #eadfbe; padding:22px 36px; display:flex; justify-content:space-between; align-items:center;">
+     <div>
+      <p style="margin:0; font-size:12px; color:#786d55;">Rua Tijuana, 19 — Lagoa Azul, Natal - RN</p>
+      <p style="margin:2px 0 0; font-size:12px; color:#786d55;">(84) 98718-1612</p>
+     </div>
+     <p style="margin:0; font-size:13px; font-weight:700; color:#b88718; font-style:italic;">Obrigado pela preferência!</p>
+    </div>
+   </div>
+  </div>
+
+  <div id="receipt-result-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
+   <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-6 shadow-2xl max-h-[90vh] overflow-y-auto" aria-modal="true" role="dialog" aria-labelledby="receipt-result-title">
+    <div class="flex justify-between gap-4 mb-4">
+     <h2 id="receipt-result-title" class="font-bold text-xl text-[#211b0f]">Comprovante Pronto</h2>
+     <button id="close-receipt-result" type="button" class="p-2 h-fit rounded-lg hover:bg-[#f5eedb]" aria-label="Fechar"><i data-lucide="x"></i></button>
+    </div>
+    <img id="receipt-preview-img" class="w-full rounded-xl border border-[#e3d7b5] mb-5" alt="Prévia do comprovante">
+    <div class="flex flex-col gap-3">
+     <button id="receipt-share-button" type="button" class="hidden gold-button rounded-xl px-4 py-3 font-bold bg-[#f4d35e] text-[#241a06] inline-flex items-center justify-center gap-2"><i data-lucide="share-2" class="w-4 h-4"></i> Compartilhar</button>
+     <button id="receipt-png-button" type="button" class="rounded-xl px-4 py-3 font-bold border border-[#5d522f] text-[#211b0f] inline-flex items-center justify-center gap-2"><i data-lucide="image" class="w-4 h-4"></i> Baixar PNG</button>
+     <button id="receipt-pdf-button" type="button" class="rounded-xl px-4 py-3 font-bold border border-[#5d522f] text-[#211b0f] inline-flex items-center justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> Baixar PDF</button>
+    </div>
+   </section>
+  </div>
+  <div id="auth-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
+   <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-8 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="auth-title">
+    <div class="text-center mb-8">
+     <div class="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4 bg-black flex items-center justify-center">
+      <img src="logo.png" alt="Galego Cell" class="w-full h-full object-contain p-2">
+     </div>
+     <h1 id="auth-title" class="font-bold text-xl text-[#211b0f]">Área Restrita</h1>
+     <p class="mt-2 text-sm text-[#786d55]">Entre com seu e-mail e senha de administrador.</p>
+    </div>
+    <form id="auth-form">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="auth-email">E-mail</label>
+     <input id="auth-email" required type="email" autocomplete="username" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-4">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="auth-password">Senha</label>
+     <input id="auth-password" required type="password" autocomplete="current-password" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-6">
+     <button id="auth-button" type="submit" class="gold-button w-full rounded-xl px-5 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Entrar</button>
+     <p id="auth-error" class="text-xs text-red-600 font-bold mt-3 text-center hidden"></p>
+    </form>
+   </section>
+  </div>
+  <template id="store-product-template">
+   <article class="product-card rounded-2xl overflow-hidden bg-white border border-[#e3d7b5] flex flex-col">
+    <div class="h-40 relative bg-gradient-to-br from-[#17140b] to-[#49370a] flex items-center justify-center overflow-hidden">
+     <img class="product-photo hidden absolute inset-0 w-full h-full object-cover" alt="">
+     <i data-lucide="smartphone" class="product-icon w-16 h-16 text-[#f4d35e]"></i>
+     <span class="product-category absolute top-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold text-[#fff1a8] backdrop-blur"></span>
+    </div>
+    <div class="p-5 flex flex-col flex-1">
+     <h3 class="product-name font-bold text-lg leading-tight text-[#211b0f]"></h3>
+     <p class="product-description text-sm text-[#786d55] leading-relaxed mt-2 line-clamp-2"></p>
+     <div class="mt-5 flex items-end justify-between gap-2">
+      <div>
+       <p class="text-[10px] mono text-[#9c9072]">A PARTIR DE</p>
+       <p class="product-price mono font-bold text-lg text-[#211b0f]"></p>
+      </div>
+      <span class="product-stock text-xs font-bold"></span>
+     </div>
+     <button type="button" class="order-button mt-5 w-full rounded-xl bg-[#f4d35e] px-4 py-3 text-sm font-bold text-[#241a06] hover:bg-[#e3bb3e]">Pedir no WhatsApp</button>
+    </div>
+   </article>
+  </template>
+  <template id="admin-product-template">
+   <article class="admin-product p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-4">
+    <div class="w-11 h-11 rounded-xl shrink-0 bg-[#fff4c7] text-[#8b6515] flex items-center justify-center"><i data-lucide="smartphone" class="w-5 h-5"></i></div>
+    <div class="min-w-0 flex-1">
+     <div class="flex flex-wrap items-center gap-2">
+      <h3 class="admin-name font-bold"></h3><span class="admin-category rounded-full bg-[#f7f0da] px-2.5 py-1 text-[10px] font-bold text-[#6e5522]"></span>
+     </div>
+     <p class="admin-description text-sm text-[#786d55] mt-1 truncate"></p>
+    </div>
+    <div class="grid grid-cols-3 gap-4 text-left lg:text-right">
+     <div><p class="mono text-[10px] text-[#9c9072]">PREÇO</p><p class="admin-price mono text-sm font-bold"></p></div>
+     <div class="admin-cost-block"><p class="mono text-[10px] text-[#9c9072]">CUSTO</p><p class="admin-cost mono text-sm font-bold"></p></div>
+     <div><p class="mono text-[10px] text-[#9c9072]">ESTOQUE</p><p class="admin-stock mono text-sm font-bold"></p></div>
+    </div>
+    <div class="flex gap-2">
+     <button type="button" class="sell-button rounded-lg bg-[#1b1608] px-3 py-2 text-xs font-bold text-[#fff1a8]">Vender</button>
+     <span class="admin-manage-buttons flex gap-2">
+      <button type="button" class="edit-button rounded-lg border border-[#e3d7b5] p-2 text-[#6e5522] hover:bg-[#fff7dc]" aria-label="Editar produto"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+      <button type="button" class="delete-button rounded-lg border border-red-100 p-2 text-red-600 hover:bg-red-50" aria-label="Excluir produto"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+     </span>
+    </div>
+    <div class="delete-confirm hidden w-full lg:w-auto items-center gap-2">
+     <span class="text-xs font-bold text-red-600">Excluir item?</span>
+     <button type="button" class="confirm-delete text-xs font-bold text-red-600 underline">Sim</button>
+     <button type="button" class="cancel-delete text-xs font-bold text-[#786d55] underline">Não</button>
+    </div>
+   </article>
+  </template>
+
+  <template id="sale-history-template">
+   <article class="sale-history-row p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-3">
+    <div class="min-w-0 flex-1">
+     <div class="flex flex-wrap items-center gap-2">
+      <h3 class="sale-product-name font-bold text-[#211b0f]"></h3>
+      <span class="sale-status rounded-full px-2.5 py-1 text-[10px] font-bold"></span>
+     </div>
+     <p class="sale-meta text-xs text-[#9c9072] mt-1"></p>
+    </div>
+    <div class="grid grid-cols-3 gap-4 text-left lg:text-right">
+     <div><p class="mono text-[10px] text-[#9c9072]">QTD</p><p class="sale-qty mono text-sm font-bold"></p></div>
+     <div><p class="mono text-[10px] text-[#9c9072]">PAGAMENTO</p><p class="sale-payment mono text-sm font-bold"></p></div>
+     <div><p class="mono text-[10px] text-[#9c9072]">TOTAL</p><p class="sale-total mono text-sm font-bold"></p></div>
+    </div>
+    <button type="button" class="sale-cancel-button rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 whitespace-nowrap">Cancelar venda</button>
+   </article>
+  </template>
+
+  <div id="cancel-confirm-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
+   <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-8 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="cancel-confirm-title">
+    <div class="text-center mb-6">
+     <div class="w-14 h-14 rounded-2xl overflow-hidden mx-auto mb-4 bg-red-50 flex items-center justify-center">
+      <i data-lucide="shield-alert" class="w-7 h-7 text-red-600"></i>
+     </div>
+     <h1 id="cancel-confirm-title" class="font-bold text-xl text-[#211b0f]">Autorização Necessária</h1>
+     <p class="mt-2 text-sm text-[#786d55]">Cancelar essa venda exige e-mail e senha de um Dono ou Gerente.</p>
+    </div>
+    <form id="cancel-confirm-form">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="manager-email">E-mail do Dono/Gerente</label>
+     <input id="manager-email" required type="email" autocomplete="off" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-4">
+     <label class="block font-bold mb-2 text-[#211b0f]" for="manager-password">Senha</label>
+     <input id="manager-password" required type="password" autocomplete="off" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-6">
+     <div class="flex gap-3">
+      <button id="cancel-confirm-close" type="button" class="flex-1 rounded-xl px-4 py-3 font-bold border border-[#d5c9a8] text-[#211b0f]">Voltar</button>
+      <button id="cancel-confirm-submit" type="submit" class="flex-1 rounded-xl px-4 py-3 font-bold bg-red-600 text-white">Confirmar</button>
+     </div>
+     <p id="cancel-confirm-error" class="text-xs text-red-600 font-bold mt-3 text-center hidden"></p>
+    </form>
+   </section>
+  </div>
+
+  <script>
+    // ====== CONFIGURAÇÃO DO FIREBASE ======
+    // Troque pelos dados do SEU projeto (Firebase Console > Configurações do projeto).
+    // Essas chaves não são segredo — quem protege os dados são as REGRAS do Firestore (veja firestore.rules).
+    const firebaseConfig = {
+      apiKey: "AIzaSyCTrWbDpbsdvRjdSrGjJvmRm3RS15IsbZ8",
+      authDomain: "planning-with-ai-55f7c.firebaseapp.com",
+      projectId: "planning-with-ai-55f7c",
+      storageBucket: "planning-with-ai-55f7c.firebasestorage.app",
+      messagingSenderId: "364652688481",
+      appId: "1:364652688481:web:035e687d110e8d79c0e620"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const productsCollection = db.collection("products");
+    const rolesCollection = db.collection("roles");
+    const salesCollection = db.collection("sales");
+    const cashSessionsCollection = db.collection("cash_sessions");
+
+    // Camada que substitui o "window.dataSdk" do Canva, usando o Firestore.
+    // O custo fica separado em uma subcoleção "private" — as regras do Firestore
+    // só liberam esse dado pra quem tem papel de dono/gerente (veja firestore.rules).
+    const dataSdk = {
+      init(handler) {
+        productsCollection.onSnapshot(
+          snapshot => {
+            rawProducts = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
+            handler.onDataChanged(rawProducts);
+          },
+          () => toast("Não foi possível carregar os produtos agora.")
+        );
+        return Promise.resolve({ isOk: true });
+      },
+      async create(record) {
+        try {
+          const { cost, ...publicFields } = record;
+          const docRef = await productsCollection.add(publicFields);
+          if (cost !== undefined) {
+            await docRef.collection("private").doc("cost").set({ cost: Number(cost) || 0 });
+          }
+          return { isOk: true };
+        } catch (e) {
+          return { isOk: false };
+        }
+      },
+      async update(record) {
+        try {
+          const { __backendId, cost, ...fields } = record;
+          await productsCollection.doc(__backendId).set(fields, { merge: true });
+          if (cost !== undefined) {
+            await productsCollection.doc(__backendId).collection("private").doc("cost").set({ cost: Number(cost) || 0 });
+          }
+          return { isOk: true };
+        } catch (e) {
+          return { isOk: false };
+        }
+      },
+      async delete(record) {
+        try {
+          await productsCollection.doc(record.__backendId).collection("private").doc("cost").delete().catch(() => {});
+          await productsCollection.doc(record.__backendId).delete();
+          return { isOk: true };
+        } catch (e) {
+          return { isOk: false };
+        }
+      }
+    };
+
+    const WHATSAPP = "5584987181612";
+    let products = [];
+    let rawProducts = [];
+    let activeSale = null;
+    let sawFirstSnapshot = false;
+    let currentRole = null;
+    let currentUserName = "";
+    let salesData = [];
+    let unsubscribeSales = null;
+    let saleToCancel = null;
+    let cart = [];
+    let currentCashSession = null;
+    let cashierHistoryData = [];
+    let unsubscribeCashSessions = null;
+
+    function isAdmin() {
+      return currentRole === "owner" || currentRole === "gerente";
+    }
+
+    function paymentLabel(method) {
+      return { dinheiro: "Dinheiro", pix: "Pix", credito: "Cartão de Crédito", debito: "Cartão de Débito" }[method] || method;
+    }
+
+    const el = id => document.getElementById(id);
+    const money = value => new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    }).format(Number(value || 0));
+
+    function toast(message) {
+      const node = el("toast");
+      node.textContent = message;
+      node.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => node.classList.remove("show"), 3200);
+    }
+
+    function openWhatsApp(message) {
+      window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
+    }
+
+    function setView(view) {
+      document.querySelectorAll(".view").forEach(node => node.classList.remove("active"));
+      el(view + "-view").classList.add("active");
+      document.querySelectorAll(".tab-button").forEach(button => {
+        button.classList.toggle("tab-active", button.dataset.viewTarget === view);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function setAdminSubview(subview) {
+      document.querySelectorAll(".admin-subview").forEach(node => node.classList.remove("active"));
+      el("subview-" + subview).classList.add("active");
+      document.querySelectorAll(".subtab-button").forEach(button => {
+        button.classList.toggle("tab-active", button.dataset.subview === subview);
+      });
+    }
+
+    function productImage(article, url) {
+      const photo = article.querySelector(".product-photo");
+      const icon = article.querySelector(".product-icon");
+
+      if (url && /^https:\/\//.test(url)) {
+        photo.src = url;
+        photo.alt = "Imagem do produto";
+        photo.classList.remove("hidden");
+        icon.classList.add("hidden");
+        photo.onerror = () => {
+          photo.classList.add("hidden");
+          icon.classList.remove("hidden");
+        };
+      }
+    }
+
+    function renderMetrics() {
+      const revenue = products.reduce((sum, product) => sum + Number(product.price) * Number(product.sold_quantity || 0), 0);
+      const cost = products.reduce((sum, product) => sum + (Number(product.cost) || 0) * Number(product.stock), 0);
+      const stock = products.reduce((sum, product) => sum + Number(product.stock), 0);
+      const units = products.reduce((sum, product) => sum + Number(product.sold_quantity || 0), 0);
+
+      el("metric-revenue").textContent = money(revenue);
+      el("metric-cost").textContent = money(cost);
+      el("metric-stock").textContent = stock;
+      el("metric-units").textContent = units;
+      el("inventory-count").textContent = products.length + (products.length === 1 ? " ITEM" : " ITENS");
+    }
+
+    function applyRoleUI() {
+      const admin = isAdmin();
+      el("new-product-button").classList.toggle("hidden", !admin);
+      el("product-cost-field").classList.toggle("hidden", !admin);
+      el("metric-cost-card").classList.toggle("hidden", !admin);
+      document.querySelectorAll(".admin-cost-block").forEach(node => node.classList.toggle("hidden", !admin));
+      document.querySelectorAll(".admin-manage-buttons").forEach(node => node.classList.toggle("hidden", !admin));
+
+      if (auth.currentUser && currentRole) {
+        const roleLabel = { owner: "Dono", gerente: "Gerente", vendedor: "Vendedor" }[currentRole] || currentRole;
+        el("current-user-name").textContent = (currentUserName || auth.currentUser.email) + " · " + roleLabel;
+      } else {
+        el("current-user-name").textContent = "";
+      }
+    }
+
+    function renderStore() {
+      const list = el("store-products");
+      const query = el("product-search").value.toLowerCase().trim();
+      const category = el("category-filter").value;
+
+      const filtered = products.filter(product =>
+        product.status !== "inativo" &&
+        (category === "all" || product.category === category) &&
+        (product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query))
+      );
+
+      list.replaceChildren();
+
+      filtered.forEach(product => {
+        const fragment = el("store-product-template").content.cloneNode(true);
+        const article = fragment.querySelector("article");
+
+        article.querySelector(".product-name").textContent = product.name;
+        article.querySelector(".product-description").textContent = product.description;
+        article.querySelector(".product-price").textContent = money(product.price);
+        article.querySelector(".product-category").textContent = product.category;
+
+        const stock = article.querySelector(".product-stock");
+        const available = Number(product.stock) > 0;
+        stock.textContent = available ? Number(product.stock) + " disponível" : "Indisponível";
+        stock.className = "product-stock text-xs font-bold " + (available ? "text-emerald-700" : "text-red-600");
+
+        const order = article.querySelector(".order-button");
+        order.disabled = !available;
+        if (!available) {
+          order.textContent = "Produto indisponível";
+          order.classList.remove("bg-[#f4d35e]", "hover:bg-[#e3bb3e]");
+          order.classList.add("bg-stone-200", "text-stone-500", "cursor-not-allowed");
+        }
+
+        order.addEventListener("click", () => {
+          openWhatsApp("Olá, Galego Cell! Tenho interesse no produto *" + product.name + "* (" + money(product.price) + "). Pode me enviar mais informações?");
+        });
+
+        productImage(article, product.image_url);
+        list.appendChild(fragment);
+      });
+
+      el("store-empty").classList.toggle("hidden", filtered.length !== 0);
+      lucide.createIcons();
+    }
+
+    function renderAdmin() {
+      const list = el("admin-products");
+      list.replaceChildren();
+
+      const query = el("admin-product-search").value.toLowerCase().trim();
+      const filtered = products.filter(product =>
+        product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query)
+      );
+
+      filtered.forEach(product => {
+        const fragment = el("admin-product-template").content.cloneNode(true);
+        const article = fragment.querySelector(".admin-product");
+
+        article.querySelector(".admin-name").textContent = product.name;
+        article.querySelector(".admin-category").textContent = product.category;
+        article.querySelector(".admin-description").textContent = product.description;
+        article.querySelector(".admin-price").textContent = money(product.price);
+        article.querySelector(".admin-cost").textContent = money(product.cost);
+        article.querySelector(".admin-stock").textContent = Number(product.stock);
+
+        const sellButton = article.querySelector(".sell-button");
+        sellButton.disabled = Number(product.stock) < 1;
+        if (sellButton.disabled) sellButton.classList.add("opacity-40", "cursor-not-allowed");
+
+        sellButton.addEventListener("click", () => openSale(product));
+        article.querySelector(".edit-button").addEventListener("click", () => editProduct(product));
+        article.querySelector(".delete-button").addEventListener("click", () => {
+          const confirmation = article.querySelector(".delete-confirm");
+          confirmation.classList.remove("hidden");
+          confirmation.classList.add("flex");
+        });
+        article.querySelector(".cancel-delete").addEventListener("click", () => {
+          const confirmation = article.querySelector(".delete-confirm");
+          confirmation.classList.add("hidden");
+          confirmation.classList.remove("flex");
+        });
+        article.querySelector(".confirm-delete").addEventListener("click", () => deleteProduct(product, article));
+
+        list.appendChild(fragment);
+      });
+
+      el("admin-empty").classList.toggle("hidden", filtered.length !== 0);
+      renderMetrics();
+      applyRoleUI();
+      lucide.createIcons();
+    }
+
+    function renderAll() {
+      renderStore();
+      renderAdmin();
+    }
+
+    async function refreshProducts(data) {
+      let merged = data;
+
+      if (isAdmin()) {
+        merged = await Promise.all(data.map(async product => {
+          try {
+            const costSnap = await productsCollection.doc(product.__backendId).collection("private").doc("cost").get();
+            return { ...product, cost: costSnap.exists ? Number(costSnap.data().cost || 0) : 0 };
+          } catch (e) {
+            return { ...product, cost: 0 };
+          }
+        }));
+      }
+
+      products = merged.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      renderAll();
+
+      // Na primeira carga, se o dono logar e não houver produtos, cria os produtos de exemplo.
+      if (!sawFirstSnapshot) {
+        sawFirstSnapshot = true;
+        if (products.length === 0 && isAdmin()) seedExampleProducts();
+      }
+    }
+
+    const handler = {
+      onDataChanged(data) {
+        refreshProducts(data);
+      }
+    };
+
+    function saleItemsSummary(sale) {
+      if (sale.items && sale.items.length) {
+        if (sale.items.length === 1) return sale.items[0].product_name;
+        return sale.items[0].product_name + " + " + (sale.items.length - 1) + (sale.items.length - 1 > 1 ? " itens" : " item");
+      }
+      return sale.product_name || "—";
+    }
+
+    function saleItemsQty(sale) {
+      if (sale.items && sale.items.length) {
+        return sale.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+      }
+      return sale.quantity || 0;
+    }
+
+    function renderSalesHistory() {
+      const list = el("sales-history");
+      list.replaceChildren();
+
+      salesData.forEach(sale => {
+        const fragment = el("sale-history-template").content.cloneNode(true);
+        const article = fragment.querySelector(".sale-history-row");
+        const cancelled = sale.status === "cancelada";
+
+        article.querySelector(".sale-product-name").textContent = saleItemsSummary(sale);
+
+        const statusEl = article.querySelector(".sale-status");
+        statusEl.textContent = cancelled ? "Cancelada" : "Concluída";
+        statusEl.className = "sale-status rounded-full px-2.5 py-1 text-[10px] font-bold " + (cancelled ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700");
+
+        const dateLabel = sale.created_at ? new Date(sale.created_at).toLocaleString("pt-BR") : "";
+        article.querySelector(".sale-meta").textContent = dateLabel + " · Vendido por " + (sale.seller_name || "—") + (cancelled && sale.cancelled_by_name ? " · Cancelado por " + sale.cancelled_by_name : "");
+
+        article.querySelector(".sale-qty").textContent = saleItemsQty(sale);
+        article.querySelector(".sale-payment").textContent = paymentLabel(sale.payment_method);
+        article.querySelector(".sale-total").textContent = money(sale.total);
+
+        const cancelButton = article.querySelector(".sale-cancel-button");
+        if (cancelled) {
+          cancelButton.remove();
+        } else {
+          cancelButton.addEventListener("click", () => openCancelConfirm(sale));
+        }
+
+        list.appendChild(fragment);
+      });
+
+      el("sales-empty").classList.toggle("hidden", salesData.length !== 0);
+      lucide.createIcons();
+    }
+
+    function startSalesListener() {
+      if (unsubscribeSales) return;
+      unsubscribeSales = salesCollection.orderBy("created_at", "desc").limit(200).onSnapshot(
+        snapshot => {
+          salesData = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
+          renderSalesHistory();
+        },
+        () => {}
+      );
+    }
+
+    function stopSalesListener() {
+      if (unsubscribeSales) {
+        unsubscribeSales();
+        unsubscribeSales = null;
+      }
+      salesData = [];
+      renderSalesHistory();
+    }
+
+    async function seedExampleProducts() {
+      const examples = [
+        { name: "iPhone 15 Pro Max", description: "Smartphone premium com câmera profissional e processador A18", price: 8499, cost: 6800, stock: 12, category: "Celulares", image_url: "https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Samsung Galaxy S24", description: "Flagship Android com IA integrada e bateria durável", price: 5999, cost: 4200, stock: 18, category: "Celulares", image_url: "https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Carregador Rápido 65W USB-C", description: "Carregamento ultra-rápido compatível com múltiplos dispositivos", price: 189, cost: 65, stock: 45, category: "Acessórios", image_url: "https://images.pexels.com/photos/4239291/pexels-photo-4239291.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Fone Bluetooth Premium", description: "Áudio estéreo com cancelamento de ruído ativo", price: 549, cost: 220, stock: 28, category: "Acessórios", image_url: "https://images.pexels.com/photos/3584994/pexels-photo-3584994.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Protetor de Tela Temperado", description: "Vidro temperado 9H com aplicação sem bolhas", price: 49, cost: 12, stock: 120, category: "Acessórios", image_url: "https://images.pexels.com/photos/3823517/pexels-photo-3823517.jpeg?auto=compress&cs=tinysrgb&w=400", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() },
+        { name: "Assistência Técnica Completa", description: "Diagnóstico, reparo e manutenção preventiva", price: 150, cost: 30, stock: 999, category: "Assistência técnica", image_url: "", status: "ativo", sold_quantity: 0, created_at: new Date().toISOString() }
+      ];
+      for (const product of examples) {
+        await dataSdk.create(product);
+      }
+    }
+
+    function openForm() {
+      setAdminSubview("estoque");
+      el("product-form-panel").classList.remove("hidden");
+      el("product-name").focus();
+    }
+
+    function closeForm() {
+      el("product-form-panel").classList.add("hidden");
+      el("product-form").reset();
+      el("editing-id").value = "";
+    }
+
+    function editProduct(product) {
+      setView("admin");
+      openForm();
+
+      el("editing-id").value = product.__backendId;
+      el("product-name").value = product.name;
+      el("product-category").value = product.category;
+      el("product-stock").value = product.stock;
+      el("product-price").value = product.price;
+      el("product-cost").value = product.cost;
+      el("product-image-url").value = product.image_url || "";
+      el("product-description").value = product.description;
+
+      el("product-form-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function deleteProduct(product, article) {
+      const confirmButton = article.querySelector(".confirm-delete");
+      confirmButton.disabled = true;
+
+      const result = await dataSdk.delete(product);
+      if (result.isOk) {
+        toast("Produto removido do catálogo.");
+      } else {
+        toast("Não foi possível excluir este produto.");
+        confirmButton.disabled = false;
+      }
+    }
+
+    function openSale(product) {
+      if (Number(product.stock) < 1) return;
+
+      const alreadyInCart = cart.filter(item => item.product_id === product.__backendId).reduce((sum, item) => sum + item.quantity, 0);
+      const remaining = Number(product.stock) - alreadyInCart;
+      if (remaining < 1) {
+        toast("Esse produto já está no carrinho com todo o estoque disponível.");
+        return;
+      }
+
+      activeSale = product;
+      el("sale-product-name").textContent = product.name;
+      el("sale-stock-info").textContent = "Disponível em estoque: " + remaining + " unidade(s).";
+      el("sale-quantity").max = remaining;
+      el("sale-quantity").value = 1;
+      el("sale-modal").classList.remove("hidden");
+      el("sale-modal").classList.add("flex");
+      el("sale-quantity").focus();
+    }
+
+    function closeSale() {
+      el("sale-modal").classList.add("hidden");
+      el("sale-modal").classList.remove("flex");
+      activeSale = null;
+    }
+
+    // ====== CARRINHO ======
+    function addToCart(product, quantity) {
+      const existing = cart.find(item => item.product_id === product.__backendId);
+      if (existing) {
+        existing.quantity += quantity;
+      } else {
+        cart.push({
+          product_id: product.__backendId,
+          name: product.name,
+          unit_price: Number(product.price),
+          quantity,
+          max_stock: Number(product.stock)
+        });
+      }
+      renderCartBadge();
+    }
+
+    function cartTotal() {
+      return cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+    }
+
+    function renderCartBadge() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const badge = el("cart-badge");
+      if (count > 0) {
+        badge.textContent = count;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+
+    function renderCart() {
+      const list = el("cart-items");
+      list.replaceChildren();
+
+      cart.forEach((item, index) => {
+        const fragment = el("cart-item-template").content.cloneNode(true);
+        const row = fragment.querySelector(".cart-item");
+
+        row.querySelector(".cart-item-name").textContent = item.name;
+        row.querySelector(".cart-item-price").textContent = money(item.unit_price) + " un.";
+        row.querySelector(".cart-item-qty").textContent = item.quantity;
+        row.querySelector(".cart-item-subtotal").textContent = money(item.unit_price * item.quantity);
+
+        row.querySelector(".cart-item-minus").addEventListener("click", () => {
+          if (item.quantity > 1) {
+            item.quantity--;
+            renderCart();
+            renderCartBadge();
+          }
+        });
+        row.querySelector(".cart-item-plus").addEventListener("click", () => {
+          if (item.quantity < item.max_stock) {
+            item.quantity++;
+            renderCart();
+            renderCartBadge();
+          } else {
+            toast("Sem mais estoque desse produto.");
+          }
+        });
+        row.querySelector(".cart-item-remove").addEventListener("click", () => {
+          cart.splice(index, 1);
+          renderCart();
+          renderCartBadge();
+        });
+
+        list.appendChild(fragment);
+      });
+
+      el("cart-empty").classList.toggle("hidden", cart.length !== 0);
+      el("cart-total").textContent = money(cartTotal());
+      el("checkout-cart-button").disabled = cart.length === 0;
+      lucide.createIcons();
+    }
+
+    function openCartModal() {
+      renderCart();
+      el("cart-modal").classList.remove("hidden");
+      el("cart-modal").classList.add("flex");
+    }
+
+    function closeCartModal() {
+      el("cart-modal").classList.add("hidden");
+      el("cart-modal").classList.remove("flex");
+    }
+
+    async function checkoutCart() {
+      if (cart.length === 0) return;
+
+      if (!currentCashSession || currentCashSession.status !== "aberto") {
+        toast("Abra o caixa antes de finalizar uma venda.");
+        return;
+      }
+
+      const paymentMethod = el("cart-payment-method").value;
+      const checkoutButton = el("checkout-cart-button");
+      checkoutButton.disabled = true;
+
+      try {
+        const items = cart.map(item => ({
+          product_id: item.product_id,
+          product_name: item.name,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          subtotal: item.unit_price * item.quantity
+        }));
+        const total = items.reduce((sum, item) => sum + item.subtotal, 0);
+
+        const batch = db.batch();
+        items.forEach(item => {
+          batch.update(productsCollection.doc(item.product_id), {
+            stock: firebase.firestore.FieldValue.increment(-item.quantity),
+            sold_quantity: firebase.firestore.FieldValue.increment(item.quantity)
+          });
+        });
+        const saleRef = salesCollection.doc();
+        batch.set(saleRef, {
+          items,
+          total,
+          payment_method: paymentMethod,
+          seller_uid: auth.currentUser.uid,
+          seller_name: currentUserName,
+          status: "concluida",
+          cash_session_id: currentCashSession.__backendId,
+          created_at: new Date().toISOString()
+        });
+
+        await batch.commit();
+
+        cart = [];
+        renderCartBadge();
+        closeCartModal();
+        toast("Venda registrada!");
+        await generateReceipt(items, total, paymentMethod);
+      } catch (e) {
+        toast("Não foi possível finalizar a venda. Confira o estoque e tente de novo.");
+      } finally {
+        checkoutButton.disabled = false;
+      }
+    }
+
+    // ====== CAIXA (abertura / fechamento / conferência) ======
+    function renderCashierStatus() {
+      const textEl = el("cashier-status-text");
+      const openBtn = el("open-cashier-button");
+      const closeBtn = el("close-cashier-button");
+
+      if (currentCashSession && currentCashSession.status === "aberto") {
+        const openedAt = new Date(currentCashSession.opened_at).toLocaleString("pt-BR");
+        textEl.textContent = "Caixa aberto por " + currentCashSession.opened_by_name + " às " + openedAt + " · Valor inicial " + money(currentCashSession.opening_amount);
+        openBtn.classList.add("hidden");
+        closeBtn.classList.remove("hidden");
+      } else {
+        textEl.textContent = "Caixa fechado. Abra o caixa para começar a vender.";
+        openBtn.classList.remove("hidden");
+        closeBtn.classList.add("hidden");
+      }
+    }
+
+    function renderCashierHistory() {
+      const list = el("cashier-history");
+      list.replaceChildren();
+
+      cashierHistoryData.forEach(session => {
+        const fragment = el("cashier-history-template").content.cloneNode(true);
+        const row = fragment.querySelector(".cashier-history-row");
+        const isOpen = session.status === "aberto";
+
+        const statusEl = row.querySelector(".cashier-history-status");
+        statusEl.textContent = isOpen ? "Aberto" : "Fechado";
+        statusEl.className = "cashier-history-status rounded-full px-2.5 py-1 text-[10px] font-bold " + (isOpen ? "bg-emerald-100 text-emerald-700" : "bg-stone-200 text-stone-700");
+
+        row.querySelector(".cashier-history-meta").textContent =
+          "Aberto por " + session.opened_by_name + " em " + new Date(session.opened_at).toLocaleString("pt-BR") +
+          (session.closed_at ? " · Fechado por " + session.closed_by_name + " em " + new Date(session.closed_at).toLocaleString("pt-BR") : "");
+
+        row.querySelector(".cashier-history-opening").textContent = money(session.opening_amount);
+        row.querySelector(".cashier-history-counted").textContent = session.counted_amount != null ? money(session.counted_amount) : "—";
+
+        const diffEl = row.querySelector(".cashier-history-diff");
+        if (session.difference != null) {
+          diffEl.textContent = (session.difference > 0 ? "+" : "") + money(session.difference);
+          diffEl.className = "cashier-history-diff mono text-sm font-bold " + (session.difference < 0 ? "text-red-600" : "text-emerald-700");
+        } else {
+          diffEl.textContent = "—";
+        }
+
+        list.appendChild(fragment);
+      });
+
+      el("cashier-history-empty").classList.toggle("hidden", cashierHistoryData.length !== 0);
+    }
+
+    function startCashierListener() {
+      if (unsubscribeCashSessions) return;
+      unsubscribeCashSessions = cashSessionsCollection.orderBy("opened_at", "desc").limit(50).onSnapshot(
+        snapshot => {
+          const sessions = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
+          currentCashSession = sessions.find(session => session.status === "aberto") || null;
+          cashierHistoryData = sessions;
+          renderCashierStatus();
+          renderCashierHistory();
+        },
+        () => {}
+      );
+    }
+
+    function stopCashierListener() {
+      if (unsubscribeCashSessions) {
+        unsubscribeCashSessions();
+        unsubscribeCashSessions = null;
+      }
+      currentCashSession = null;
+      cashierHistoryData = [];
+      renderCashierStatus();
+      renderCashierHistory();
+    }
+
+    function openOpenCashierModal() {
+      el("opening-amount").value = "";
+      el("open-cashier-modal").classList.remove("hidden");
+      el("open-cashier-modal").classList.add("flex");
+    }
+
+    function closeOpenCashierModal() {
+      el("open-cashier-modal").classList.add("hidden");
+      el("open-cashier-modal").classList.remove("flex");
+    }
+
+    async function openCashier(amount) {
+      await cashSessionsCollection.add({
+        opened_at: new Date().toISOString(),
+        opened_by_uid: auth.currentUser.uid,
+        opened_by_name: currentUserName,
+        opening_amount: amount,
+        status: "aberto"
+      });
+    }
+
+    function computeExpectedCash() {
+      if (!currentCashSession) return 0;
+      const cashSales = salesData.filter(sale =>
+        sale.cash_session_id === currentCashSession.__backendId &&
+        sale.status !== "cancelada" &&
+        sale.payment_method === "dinheiro"
+      );
+      const totalCash = cashSales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+      return Number(currentCashSession.opening_amount || 0) + totalCash;
+    }
+
+    function openCloseCashierModal() {
+      const expected = computeExpectedCash();
+      el("close-cashier-summary").textContent = "Valor esperado em dinheiro: " + money(expected);
+      el("counted-amount").value = "";
+      el("close-cashier-difference").textContent = "";
+      el("close-cashier-modal").dataset.expected = expected;
+      el("close-cashier-modal").classList.remove("hidden");
+      el("close-cashier-modal").classList.add("flex");
+    }
+
+    function closeCloseCashierModal() {
+      el("close-cashier-modal").classList.add("hidden");
+      el("close-cashier-modal").classList.remove("flex");
+    }
+
+    async function closeCashier(countedAmount) {
+      const expected = Number(el("close-cashier-modal").dataset.expected || 0);
+      const difference = countedAmount - expected;
+      await cashSessionsCollection.doc(currentCashSession.__backendId).update({
+        status: "fechado",
+        closed_at: new Date().toISOString(),
+        closed_by_uid: auth.currentUser.uid,
+        closed_by_name: currentUserName,
+        counted_amount: countedAmount,
+        expected_cash: expected,
+        difference: difference
+      });
+    }
+
+    let receiptCanvas = null;
+
+    async function generateReceipt(items, total, paymentMethod) {
+      const now = new Date();
+
+      el("receipt-date").textContent = now.toLocaleString("pt-BR");
+      el("receipt-total").textContent = money(total);
+      el("receipt-payment").textContent = paymentLabel(paymentMethod);
+      el("receipt-seller").textContent = currentUserName || (auth.currentUser && auth.currentUser.email) || "—";
+
+      const body = el("receipt-items-body");
+      body.replaceChildren();
+      items.forEach(item => {
+        const row = document.createElement("tr");
+        row.style.borderBottom = "1px solid #f0e8d2";
+
+        const tdName = document.createElement("td");
+        tdName.style.cssText = "padding:14px 0; font-weight:700; color:#211b0f;";
+        tdName.textContent = item.product_name;
+
+        const tdQty = document.createElement("td");
+        tdQty.style.cssText = "padding:14px 0; text-align:center; color:#4b4227;";
+        tdQty.textContent = item.quantity;
+
+        const tdUnit = document.createElement("td");
+        tdUnit.style.cssText = "padding:14px 0; text-align:right; color:#4b4227; font-family:'Space Mono',monospace;";
+        tdUnit.textContent = money(item.unit_price);
+
+        const tdSub = document.createElement("td");
+        tdSub.style.cssText = "padding:14px 0; text-align:right; color:#4b4227; font-family:'Space Mono',monospace;";
+        tdSub.textContent = money(item.subtotal);
+
+        row.append(tdName, tdQty, tdUnit, tdSub);
+        body.appendChild(row);
+      });
+
+      const template = el("receipt-template");
+      receiptCanvas = await html2canvas(template, { scale: 2, backgroundColor: "#fffdf5" });
+
+      el("receipt-preview-img").src = receiptCanvas.toDataURL("image/png");
+      el("receipt-result-modal").classList.remove("hidden");
+      el("receipt-result-modal").classList.add("flex");
+
+      const shareButton = el("receipt-share-button");
+      if (navigator.canShare && navigator.share) {
+        shareButton.classList.remove("hidden");
+      } else {
+        shareButton.classList.add("hidden");
+      }
+
+      lucide.createIcons();
+    }
+
+    function receiptFileName(extension) {
+      return "comprovante-galego-cell-" + Date.now() + "." + extension;
+    }
+
+    function downloadDataUrl(dataUrl, filename) {
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function downloadReceiptPng() {
+      if (!receiptCanvas) return;
+      downloadDataUrl(receiptCanvas.toDataURL("image/png"), receiptFileName("png"));
+    }
+
+    function downloadReceiptPdf() {
+      if (!receiptCanvas) return;
+      const { jsPDF } = window.jspdf;
+      const widthMm = 140;
+      const heightMm = widthMm * (receiptCanvas.height / receiptCanvas.width);
+      const pdf = new jsPDF({ unit: "mm", format: [widthMm, heightMm] });
+      pdf.addImage(receiptCanvas.toDataURL("image/png"), "PNG", 0, 0, widthMm, heightMm);
+      pdf.save(receiptFileName("pdf"));
+    }
+
+    async function shareReceipt() {
+      if (!receiptCanvas) return;
+      receiptCanvas.toBlob(async blob => {
+        const file = new File([blob], receiptFileName("png"), { type: "image/png" });
+        try {
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: "Comprovante Galego Cell" });
+          }
+        } catch (e) {
+          // Usuário cancelou o compartilhamento — não faz nada.
+        }
+      }, "image/png");
+    }
+
+    // ====== AUTENTICAÇÃO (Firebase Auth substitui a senha fixa no código) ======
+    async function requireAuth(callback) {
+      if (auth.currentUser && currentRole) {
+        callback();
+        return;
+      }
+
+      if (auth.currentUser && !currentRole) {
+        // Sessão já estava aberta (ex.: recarregou a página) — só falta buscar o papel do usuário.
+        try {
+          const roleSnap = await rolesCollection.doc(auth.currentUser.uid).get();
+          if (roleSnap.exists && roleSnap.data().role) {
+            currentRole = roleSnap.data().role;
+            currentUserName = roleSnap.data().name || auth.currentUser.email;
+            startSalesListener();
+            startCashierListener();
+            await refreshProducts(rawProducts);
+            callback();
+            return;
+          }
+        } catch (e) { /* segue para pedir login novamente */ }
+        await auth.signOut();
+      }
+
+      el("auth-modal").classList.remove("hidden");
+      el("auth-email").focus();
+      window.pendingAuthCallback = callback;
+    }
+
+    function openCancelConfirm(sale) {
+      saleToCancel = sale;
+      el("manager-email").value = "";
+      el("manager-password").value = "";
+      el("cancel-confirm-error").classList.add("hidden");
+      el("cancel-confirm-modal").classList.remove("hidden");
+      el("cancel-confirm-modal").classList.add("flex");
+    }
+
+    function closeCancelConfirm() {
+      saleToCancel = null;
+      el("cancel-confirm-modal").classList.add("hidden");
+      el("cancel-confirm-modal").classList.remove("flex");
+    }
+
+    // Verifica a senha de um Dono/Gerente SEM derrubar a sessão de quem está logado no
+    // momento, usando uma segunda instância isolada do Firebase só para essa checagem.
+    async function verifyManagerCredentials(email, password) {
+      const secondaryApp = firebase.initializeApp(firebaseConfig, "auth-verify-" + Date.now());
+      try {
+        const cred = await secondaryApp.auth().signInWithEmailAndPassword(email, password);
+        const roleSnap = await secondaryApp.firestore().collection("roles").doc(cred.user.uid).get();
+        const role = roleSnap.exists ? roleSnap.data().role : null;
+        if (role !== "owner" && role !== "gerente") {
+          throw new Error("sem-permissao");
+        }
+        return { app: secondaryApp, name: (roleSnap.data() && roleSnap.data().name) || email };
+      } catch (e) {
+        await secondaryApp.auth().signOut().catch(() => {});
+        await secondaryApp.delete().catch(() => {});
+        throw e;
+      }
+    }
+
+    async function confirmCancelSale(email, password) {
+      const manager = await verifyManagerCredentials(email, password);
+      try {
+        const sdb = manager.app.firestore();
+        const batch = sdb.batch();
+        batch.set(sdb.collection("sales").doc(saleToCancel.__backendId), {
+          status: "cancelada",
+          cancelled_at: new Date().toISOString(),
+          cancelled_by_name: manager.name
+        }, { merge: true });
+
+        const itemsToReverse = (saleToCancel.items && saleToCancel.items.length)
+          ? saleToCancel.items
+          : [{ product_id: saleToCancel.product_id, quantity: saleToCancel.quantity }];
+
+        itemsToReverse.forEach(item => {
+          batch.set(sdb.collection("products").doc(item.product_id), {
+            stock: firebase.firestore.FieldValue.increment(Number(item.quantity)),
+            sold_quantity: firebase.firestore.FieldValue.increment(-Number(item.quantity))
+          }, { merge: true });
+        });
+
+        await batch.commit();
+      } finally {
+        await manager.app.auth().signOut().catch(() => {});
+        await manager.app.delete().catch(() => {});
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      dataSdk.init(handler);
+
+      el("auth-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        const email = el("auth-email").value.trim();
+        const password = el("auth-password").value;
+        const errorEl = el("auth-error");
+        const authButton = el("auth-button");
+        authButton.disabled = true;
+
+        try {
+          const cred = await auth.signInWithEmailAndPassword(email, password);
+          const roleSnap = await rolesCollection.doc(cred.user.uid).get();
+
+          if (!roleSnap.exists || !roleSnap.data().role) {
+            await auth.signOut();
+            errorEl.textContent = "Esse usuário não tem permissão configurada. Fale com o dono da loja.";
+            errorEl.classList.remove("hidden");
+            return;
+          }
+
+          currentRole = roleSnap.data().role;
+          currentUserName = roleSnap.data().name || email;
+
+          el("auth-modal").classList.add("hidden");
+          el("auth-password").value = "";
+          errorEl.classList.add("hidden");
+
+          startSalesListener();
+          startCashierListener();
+          await refreshProducts(rawProducts);
+
+          if (window.pendingAuthCallback) {
+            window.pendingAuthCallback();
+            window.pendingAuthCallback = null;
+          }
+        } catch (e) {
+          errorEl.textContent = "E-mail ou senha incorretos. Tente novamente.";
+          errorEl.classList.remove("hidden");
+          el("auth-password").value = "";
+          el("auth-password").focus();
+        } finally {
+          authButton.disabled = false;
+        }
+      });
+
+      el("logout-button").addEventListener("click", async () => {
+        await auth.signOut();
+        currentRole = null;
+        currentUserName = "";
+        cart = [];
+        renderCartBadge();
+        stopSalesListener();
+        stopCashierListener();
+        await refreshProducts(rawProducts);
+        setView("store");
+        toast("Sessão encerrada.");
+      });
+
+      el("cancel-confirm-close").addEventListener("click", closeCancelConfirm);
+
+      el("cancel-confirm-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        const submitButton = el("cancel-confirm-submit");
+        const errorEl = el("cancel-confirm-error");
+        submitButton.disabled = true;
+        errorEl.classList.add("hidden");
+
+        try {
+          await confirmCancelSale(el("manager-email").value.trim(), el("manager-password").value);
+          toast("Venda cancelada e estoque restaurado.");
+          closeCancelConfirm();
+        } catch (e) {
+          errorEl.textContent = "E-mail/senha inválidos ou sem permissão de Dono/Gerente.";
+          errorEl.classList.remove("hidden");
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      document.querySelectorAll("[data-view-target]").forEach(button => {
+        button.addEventListener("click", () => {
+          if (button.dataset.viewTarget === "admin") {
+            requireAuth(() => setView("admin"));
+          } else {
+            setView(button.dataset.viewTarget);
+          }
+        });
+      });
+
+      el("open-maps").addEventListener("click", () => {
+        el("maps-link").click();
+      });
+
+      el("brand-button").addEventListener("click", () => setView("store"));
+      el("floating-whatsapp").addEventListener("click", () => openWhatsApp("Olá, Galego Cell! Preciso de atendimento."));
+      el("hero-whatsapp").addEventListener("click", () => openWhatsApp("Olá, Galego Cell! Gostaria de falar com um especialista."));
+      el("product-search").addEventListener("input", renderStore);
+      el("category-filter").addEventListener("change", renderStore);
+      el("admin-product-search").addEventListener("input", renderAdmin);
+      document.querySelectorAll("[data-subview]").forEach(button => {
+        button.addEventListener("click", () => setAdminSubview(button.dataset.subview));
+      });
+      el("new-product-button").addEventListener("click", openForm);
+      el("close-form-button").addEventListener("click", closeForm);
+      el("cancel-form-button").addEventListener("click", closeForm);
+      el("close-sale-modal").addEventListener("click", closeSale);
+      el("cancel-sale-button").addEventListener("click", closeSale);
+      el("close-receipt-result").addEventListener("click", () => {
+        el("receipt-result-modal").classList.add("hidden");
+        el("receipt-result-modal").classList.remove("flex");
+      });
+      el("receipt-png-button").addEventListener("click", downloadReceiptPng);
+      el("receipt-pdf-button").addEventListener("click", downloadReceiptPdf);
+      el("receipt-share-button").addEventListener("click", shareReceipt);
+
+      el("product-form").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const saveButton = el("save-product-button");
+        saveButton.disabled = true;
+
+        const id = el("editing-id").value;
+        const existing = products.find(product => product.__backendId === id);
+
+        const record = {
+          name: el("product-name").value.trim(),
+          description: el("product-description").value.trim(),
+          price: Number(el("product-price").value),
+          cost: Number(el("product-cost").value),
+          stock: Number(el("product-stock").value),
+          category: el("product-category").value,
+          image_url: el("product-image-url").value.trim(),
+          status: "ativo",
+          sold_quantity: existing ? Number(existing.sold_quantity || 0) : 0,
+          created_at: existing ? existing.created_at : new Date().toISOString()
+        };
+
+        let result;
+        if (existing) {
+          result = await dataSdk.update({ __backendId: existing.__backendId, ...record });
+        } else {
+          if (products.length >= 999) {
+            toast("Limite de 999 produtos atingido.");
+            saveButton.disabled = false;
+            return;
+          }
+          result = await dataSdk.create(record);
+        }
+
+        saveButton.disabled = false;
+
+        if (result.isOk) {
+          toast(existing ? "Produto atualizado com sucesso." : "Produto cadastrado com sucesso.");
+          closeForm();
+        } else {
+          toast("Não foi possível salvar o produto.");
+        }
+      });
+
+      el("sale-form").addEventListener("submit", event => {
+        event.preventDefault();
+        if (!activeSale) return;
+
+        const quantity = Number(el("sale-quantity").value);
+        const alreadyInCart = cart.filter(item => item.product_id === activeSale.__backendId).reduce((sum, item) => sum + item.quantity, 0);
+
+        if (quantity < 1 || (quantity + alreadyInCart) > Number(activeSale.stock)) {
+          toast("Informe uma quantidade disponível em estoque.");
+          return;
+        }
+
+        addToCart(activeSale, quantity);
+        closeSale();
+        toast("Adicionado ao carrinho.");
+      });
+
+      el("cart-button").addEventListener("click", openCartModal);
+      el("close-cart-modal").addEventListener("click", closeCartModal);
+      el("checkout-cart-button").addEventListener("click", checkoutCart);
+
+      el("open-cashier-button").addEventListener("click", openOpenCashierModal);
+      el("cancel-open-cashier").addEventListener("click", closeOpenCashierModal);
+      el("open-cashier-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        const amount = Number(el("opening-amount").value);
+        const submitButton = event.target.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        try {
+          await openCashier(amount);
+          closeOpenCashierModal();
+          toast("Caixa aberto!");
+        } catch (e) {
+          toast("Não foi possível abrir o caixa.");
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      el("close-cashier-button").addEventListener("click", openCloseCashierModal);
+      el("cancel-close-cashier").addEventListener("click", closeCloseCashierModal);
+      el("counted-amount").addEventListener("input", () => {
+        const diffEl = el("close-cashier-difference");
+        if (el("counted-amount").value === "") {
+          diffEl.textContent = "";
+          return;
+        }
+        const expected = Number(el("close-cashier-modal").dataset.expected || 0);
+        const counted = Number(el("counted-amount").value || 0);
+        const diff = counted - expected;
+        diffEl.textContent = diff === 0 ? "Confere certinho." : (diff > 0 ? "Sobra de " + money(diff) : "Falta de " + money(Math.abs(diff)));
+        diffEl.className = "text-sm font-bold mb-6 " + (diff === 0 ? "text-emerald-700" : diff > 0 ? "text-amber-600" : "text-red-600");
+      });
+      el("close-cashier-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        const counted = Number(el("counted-amount").value);
+        const submitButton = event.target.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        try {
+          await closeCashier(counted);
+          closeCloseCashierModal();
+          toast("Caixa fechado!");
+        } catch (e) {
+          toast("Não foi possível fechar o caixa.");
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+    });
+  </script>
+ </body>
+</html>
