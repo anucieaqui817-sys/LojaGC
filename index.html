@@ -285,22 +285,22 @@
       </div>
      </div>
      <section aria-label="Resumo financeiro" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-9">
-      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+      <article data-subview="vendas" role="button" tabindex="0" class="metric-card cursor-pointer rounded-2xl p-5 bg-white border border-[#e3d7b5] hover:border-[#f4d35e] hover:shadow-md transition">
        <div class="flex justify-between items-start"><i data-lucide="trending-up" class="w-5 h-5 text-[#f4d35e]"></i> <span class="mono text-xs text-[#a99d7f]">VENDAS</span></div>
        <p id="metric-revenue" class="mono mt-6 text-2xl font-bold">R$ 0,00</p>
        <p class="mt-2 text-sm text-[#786d55]">Receita total</p>
       </article>
-      <article id="metric-cost-card" class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+      <article id="metric-cost-card" data-subview="estoque" role="button" tabindex="0" class="metric-card cursor-pointer rounded-2xl p-5 bg-white border border-[#e3d7b5] hover:border-[#f4d35e] hover:shadow-md transition">
        <div class="flex justify-between items-start"><i data-lucide="wallet-cards" class="w-5 h-5 text-[#b88718]"></i> <span class="mono text-xs text-[#82785f]">CUSTO</span></div>
        <p id="metric-cost" class="mono mt-6 text-2xl font-bold">R$ 0,00</p>
        <p class="mt-2 text-sm text-[#786d55]">Valor em estoque</p>
       </article>
-      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+      <article data-subview="estoque" role="button" tabindex="0" class="metric-card cursor-pointer rounded-2xl p-5 bg-white border border-[#e3d7b5] hover:border-[#f4d35e] hover:shadow-md transition">
        <div class="flex justify-between items-start"><i data-lucide="boxes" class="w-5 h-5 text-[#8d6512]"></i> <span class="mono text-xs text-[#82785f]">ESTOQUE</span></div>
        <p id="metric-stock" class="mono mt-6 text-2xl font-bold">0</p>
        <p class="mt-2 text-sm text-[#786d55]">Unidades em estoque</p>
       </article>
-      <article class="rounded-2xl p-5 bg-white border border-[#e3d7b5]">
+      <article data-subview="vendas" role="button" tabindex="0" class="metric-card cursor-pointer rounded-2xl p-5 bg-white border border-[#e3d7b5] hover:border-[#f4d35e] hover:shadow-md transition">
        <div class="flex justify-between items-start"><i data-lucide="shopping-bag" class="w-5 h-5 text-[#9a6d10]"></i> <span class="mono text-xs text-[#82785f]">SAÍDAS</span></div>
        <p id="metric-units" class="mono mt-6 text-2xl font-bold">0</p>
        <p class="mt-2 text-sm text-[#786d55]">Unidades vendidas</p>
@@ -1033,6 +1033,7 @@
       document.querySelectorAll(".subtab-button").forEach(button => {
         button.classList.toggle("tab-active", button.dataset.subview === subview);
       });
+      el("subview-" + subview).scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function productImage(article, url) {
@@ -2299,6 +2300,12 @@
       el("admin-product-search").addEventListener("input", renderAdmin);
       document.querySelectorAll("[data-subview]").forEach(button => {
         button.addEventListener("click", () => setAdminSubview(button.dataset.subview));
+        button.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setAdminSubview(button.dataset.subview);
+          }
+        });
       });
       el("new-product-button").addEventListener("click", openForm);
       el("close-form-button").addEventListener("click", closeForm);
