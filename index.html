@@ -183,6 +183,16 @@
          <option value="Celulares">Celulares</option>
          <option value="Acessórios">Acessórios</option>
          <option value="Assistência técnica">Assistência técnica</option>
+         <option value="Cabos USB">Cabos USB</option>
+         <option value="Carregadores">Carregadores</option>
+         <option value="Película">Película</option>
+         <option value="Telas">Telas</option>
+         <option value="Dock">Dock</option>
+         <option value="Baterias">Baterias</option>
+         <option value="Câmeras">Câmeras</option>
+         <option value="Fonte">Fonte</option>
+         <option value="Controles">Controles</option>
+         <option value="Caixa de Som">Caixa de Som</option>
         </select>
        </div>
       </div>
@@ -307,13 +317,41 @@
       </article>
      </section>
      <nav aria-label="Seções do painel" class="flex gap-2 mb-6 overflow-x-auto pb-1">
-      <button type="button" data-subview="estoque" class="subtab-button tab-active whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Estoque</button>
+      <button type="button" data-subview="vender" class="subtab-button tab-active whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Vender</button>
+      <button type="button" data-subview="estoque" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Estoque</button>
       <button type="button" data-subview="vendas" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Vendas</button>
       <button type="button" data-subview="caixa" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Caixa</button>
       <button type="button" data-subview="os" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Ordens de Serviço</button>
       <button type="button" data-subview="equipe" class="subtab-button whitespace-nowrap rounded-lg px-4 py-2 text-sm font-bold border border-[#d5c9a8] text-[#211b0f]">Equipe</button>
      </nav>
-     <div id="subview-estoque" class="admin-subview active">
+     <div id="subview-vender" class="admin-subview active">
+      <div id="vender-categories-panel">
+       <input id="vender-search" type="search" placeholder="Buscar produto pelo nome..." class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 text-sm mb-5">
+       <div id="vender-category-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-24"></div>
+       <div id="vender-search-results" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-24"></div>
+      </div>
+      <div id="vender-products-panel" class="hidden">
+       <button id="vender-back-button" type="button" class="inline-flex items-center gap-2 text-sm font-bold text-[#b88718] mb-4">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Categorias
+       </button>
+       <h2 id="vender-products-title" class="font-bold text-xl text-[#211b0f] mb-4"></h2>
+       <div id="vender-products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-24"></div>
+       <div id="vender-products-empty" class="hidden rounded-2xl border border-dashed border-[#c9b887] bg-[#fffcf1] p-12 text-center">
+        <i data-lucide="package-search" class="w-10 h-10 mx-auto text-[#b88718]"></i>
+        <p class="font-semibold mt-4 text-[#786d55]">Nenhum produto nessa categoria.</p>
+       </div>
+      </div>
+      <div id="vender-cart-bar" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-[#15130d] shadow-2xl">
+       <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+        <div class="text-[#fff1a8]">
+         <p class="text-xs font-bold" id="vender-cart-count">0 itens</p>
+         <p class="mono text-lg font-bold" id="vender-cart-total">R$ 0,00</p>
+        </div>
+        <button id="vender-cart-button" type="button" class="gold-button rounded-xl px-6 py-3 font-bold bg-[#f4d35e] text-[#241a06]">Cobrar</button>
+       </div>
+      </div>
+     </div>
+     <div id="subview-estoque" class="admin-subview">
      <section id="product-form-panel" class="hidden rounded-2xl bg-[#15130d] p-5 sm:p-7 mb-8 shadow-2xl">
       <div class="flex items-center justify-between gap-4 mb-6">
        <div>
@@ -332,6 +370,16 @@
           <option value="Celulares">Celulares</option>
           <option value="Acessórios">Acessórios</option>
           <option value="Assistência técnica">Assistência técnica</option>
+          <option value="Cabos USB">Cabos USB</option>
+          <option value="Carregadores">Carregadores</option>
+          <option value="Película">Película</option>
+          <option value="Telas">Telas</option>
+          <option value="Dock">Dock</option>
+          <option value="Baterias">Baterias</option>
+          <option value="Câmeras">Câmeras</option>
+          <option value="Fonte">Fonte</option>
+          <option value="Controles">Controles</option>
+          <option value="Caixa de Som">Caixa de Som</option>
          </select></div>
         <div><label class="block font-bold mb-2 text-[#fff1a8]" for="product-stock">Estoque</label>
          <input id="product-stock" required min="0" step="1" type="number" class="w-full rounded-xl border border-[#5d522f] bg-[#0b0a07] px-4 py-3 text-white"></div>
@@ -386,6 +434,25 @@
      </section>
      </div>
      <div id="subview-caixa" class="admin-subview">
+     <div id="cashier-live-summary" class="hidden rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm mt-8 mb-6">
+      <div class="p-5 sm:p-6 border-b border-[#eadfbe] flex items-center justify-between gap-3">
+       <div>
+        <h2 class="font-bold text-[#211b0f]">Caixa Atual</h2>
+        <p class="mt-1 text-sm text-[#786d55]">Resumo das vendas desde a abertura</p>
+       </div>
+       <span class="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 text-xs font-bold whitespace-nowrap">ABERTO</span>
+      </div>
+      <div class="p-5 sm:p-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+       <div class="rounded-xl bg-[#fbf6e6] p-4"><p class="mono text-[10px] text-[#9c9072] flex items-center gap-1"><i data-lucide="banknote" class="w-3.5 h-3.5"></i> DINHEIRO</p><p id="cashier-live-dinheiro" class="mono text-lg font-bold text-[#211b0f] mt-1">R$ 0,00</p></div>
+       <div class="rounded-xl bg-[#fbf6e6] p-4"><p class="mono text-[10px] text-[#9c9072] flex items-center gap-1"><i data-lucide="qr-code" class="w-3.5 h-3.5"></i> PIX</p><p id="cashier-live-pix" class="mono text-lg font-bold text-[#211b0f] mt-1">R$ 0,00</p></div>
+       <div class="rounded-xl bg-[#fbf6e6] p-4"><p class="mono text-[10px] text-[#9c9072] flex items-center gap-1"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i> CRÉDITO</p><p id="cashier-live-credito" class="mono text-lg font-bold text-[#211b0f] mt-1">R$ 0,00</p></div>
+       <div class="rounded-xl bg-[#fbf6e6] p-4"><p class="mono text-[10px] text-[#9c9072] flex items-center gap-1"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i> DÉBITO</p><p id="cashier-live-debito" class="mono text-lg font-bold text-[#211b0f] mt-1">R$ 0,00</p></div>
+      </div>
+      <div class="px-5 sm:px-6 pb-5 sm:pb-6 flex flex-wrap items-center justify-between gap-2 border-t border-[#eadfbe] pt-4">
+       <p class="text-sm text-[#786d55]"><span id="cashier-live-count" class="font-bold text-[#211b0f]">0</span> vendas nesta sessão</p>
+       <p class="text-sm text-[#786d55]">Total: <span id="cashier-live-total" class="mono text-lg font-bold text-[#211b0f]">R$ 0,00</span></p>
+      </div>
+     </div>
      <section class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm mt-8">
       <div class="p-5 sm:p-6 border-b border-[#eadfbe]">
        <h2 class="font-bold text-[#211b0f]">Histórico de Caixa</h2>
@@ -494,7 +561,12 @@
        <div class="rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm p-6">
         <p id="my-commission-rule" class="text-sm text-[#786d55]">Nenhuma regra de comissão configurada ainda. Fale com seu gerente.</p>
         <p class="mono mt-6 text-3xl font-bold text-[#211b0f]" id="my-commission-total">R$ 0,00</p>
-        <p class="mt-2 text-sm text-[#786d55]">Comissão acumulada</p>
+        <p class="mt-2 text-sm text-[#786d55]" id="my-commission-since">Comissão acumulada</p>
+       </div>
+       <div class="mt-5 rounded-2xl overflow-hidden border border-[#ddcfaa] bg-white shadow-sm">
+        <div class="p-5 border-b border-[#eadfbe]"><h3 class="font-bold text-sm text-[#211b0f]">Fechamentos anteriores</h3></div>
+        <div id="my-commission-history" class="p-5 space-y-2"></div>
+        <p id="my-commission-history-empty" class="px-5 pb-5 text-sm text-[#9c9072]">Nenhum fechamento registrado ainda.</p>
        </div>
       </div>
      </div>
@@ -568,6 +640,13 @@
    </div>
   </template>
 
+  <div id="image-lightbox-modal" class="hidden fixed z-[60] inset-0 bg-black/90 p-4 items-center justify-center">
+   <button id="image-lightbox-close" type="button" class="absolute top-4 right-4 rounded-full bg-white/10 p-2.5 text-white hover:bg-white/20" aria-label="Fechar">
+    <i data-lucide="x" class="w-6 h-6"></i>
+   </button>
+   <img id="image-lightbox-photo" class="max-w-full max-h-full rounded-xl object-contain" alt="Foto do produto ampliada">
+  </div>
+
   <div id="open-cashier-modal" class="hidden fixed z-50 inset-0 modal-backdrop p-4 items-center justify-center">
    <section class="w-full max-w-sm rounded-2xl bg-[#fffdf5] p-8 shadow-2xl" aria-modal="true" role="dialog" aria-labelledby="open-cashier-title">
     <div class="text-center mb-6">
@@ -597,6 +676,7 @@
      <h1 id="close-cashier-title" class="font-bold text-xl text-[#211b0f]">Fechar Caixa</h1>
      <p id="close-cashier-summary" class="mt-2 text-sm text-[#786d55]"></p>
     </div>
+    <div id="close-cashier-breakdown" class="rounded-xl bg-[#fbf6e6] p-4 mb-6 space-y-1.5 text-sm"></div>
     <form id="close-cashier-form">
      <label class="block font-bold mb-2 text-[#211b0f]" for="counted-amount">Valor contado no caixa (R$)</label>
      <input id="counted-amount" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-[#d5c9a8] bg-white px-4 py-3 mb-3">
@@ -610,18 +690,21 @@
   </div>
 
   <template id="cashier-history-template">
-   <article class="cashier-history-row p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center gap-3">
-    <div class="min-w-0 flex-1">
-     <div class="flex flex-wrap items-center gap-2">
-      <span class="cashier-history-status rounded-full px-2.5 py-1 text-[10px] font-bold"></span>
+   <article class="cashier-history-row p-5 sm:p-6">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-3">
+     <div class="min-w-0 flex-1">
+      <div class="flex flex-wrap items-center gap-2">
+       <span class="cashier-history-status rounded-full px-2.5 py-1 text-[10px] font-bold"></span>
+      </div>
+      <p class="cashier-history-meta text-xs text-[#9c9072] mt-1"></p>
      </div>
-     <p class="cashier-history-meta text-xs text-[#9c9072] mt-1"></p>
+     <div class="grid grid-cols-3 gap-4 text-left lg:text-right">
+      <div><p class="mono text-[10px] text-[#9c9072]">ABERTURA</p><p class="cashier-history-opening mono text-sm font-bold"></p></div>
+      <div><p class="mono text-[10px] text-[#9c9072]">CONTADO</p><p class="cashier-history-counted mono text-sm font-bold"></p></div>
+      <div><p class="mono text-[10px] text-[#9c9072]">DIFERENÇA</p><p class="cashier-history-diff mono text-sm font-bold"></p></div>
+     </div>
     </div>
-    <div class="grid grid-cols-3 gap-4 text-left lg:text-right">
-     <div><p class="mono text-[10px] text-[#9c9072]">ABERTURA</p><p class="cashier-history-opening mono text-sm font-bold"></p></div>
-     <div><p class="mono text-[10px] text-[#9c9072]">CONTADO</p><p class="cashier-history-counted mono text-sm font-bold"></p></div>
-     <div><p class="mono text-[10px] text-[#9c9072]">DIFERENÇA</p><p class="cashier-history-diff mono text-sm font-bold"></p></div>
-    </div>
+    <div class="cashier-history-breakdown mt-3 pt-3 border-t border-[#f0e8d2] flex flex-wrap gap-2"></div>
    </article>
   </template>
 
@@ -691,6 +774,53 @@
      <p id="os-receipt-issue" style="margin:0 0 20px; font-size:14px; color:#4b4227; line-height:1.5;"></p>
      <p style="margin:0; font-size:11px; color:#9c9072; line-height:1.5; border-top:1px solid #eadfbe; padding-top:14px;">
       Este comprovante é necessário para a retirada do aparelho. A garantia cobre exclusivamente o serviço executado, não cobrindo mau uso, queda, contato com líquido ou novos defeitos.
+     </p>
+    </div>
+    <div style="border-top:1px solid #eadfbe; padding:22px 36px; display:flex; justify-content:space-between; align-items:center;">
+     <div>
+      <p style="margin:0; font-size:12px; color:#786d55;">Rua Tijuana, 19 — Lagoa Azul, Natal - RN</p>
+      <p style="margin:2px 0 0; font-size:12px; color:#786d55;">(84) 98718-1612</p>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <!-- Modelo visual da OS de entrega (recibo de entrega/pagamento do conserto) -->
+  <div style="position:fixed; left:-9999px; top:0;">
+   <div id="os-delivery-receipt-template" style="width:600px; background:#fffdf5; font-family:'DM Sans',sans-serif; color:#1d190c;">
+    <div style="background:#0e0c08; padding:32px 36px; display:flex; align-items:center; gap:16px;">
+     <img src="logo.png" alt="" style="width:56px; height:56px; object-fit:contain;">
+     <div>
+      <p style="margin:0; font-weight:700; font-size:20px; color:#fff1a8; letter-spacing:.03em;">GALEGO CELL</p>
+      <p style="margin:2px 0 0; font-size:12px; color:#c9bd94;">Comprovante de Entrega</p>
+     </div>
+    </div>
+    <div style="height:4px; background:linear-gradient(90deg,#f4d35e,#b88718);"></div>
+    <div style="padding:32px 36px;">
+     <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:20px;">
+      <p id="os-delivery-receipt-number" style="margin:0; font-weight:700; font-size:18px; color:#211b0f;"></p>
+      <p id="os-delivery-receipt-date" style="margin:0; font-size:12px; color:#9c9072; font-family:'Space Mono',monospace;"></p>
+     </div>
+     <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:18px;">
+      <tr><td style="padding:4px 0; color:#9c9072; width:35%;">Cliente</td><td id="os-delivery-receipt-customer" style="padding:4px 0; font-weight:700;"></td></tr>
+      <tr><td style="padding:4px 0; color:#9c9072;">Telefone</td><td id="os-delivery-receipt-phone" style="padding:4px 0;"></td></tr>
+      <tr><td style="padding:4px 0; color:#9c9072;">Aparelho</td><td id="os-delivery-receipt-device" style="padding:4px 0; font-weight:700;"></td></tr>
+      <tr><td style="padding:4px 0; color:#9c9072;">Garantia</td><td id="os-delivery-receipt-warranty" style="padding:4px 0;"></td></tr>
+     </table>
+     <p style="margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.05em; color:#9c9072;">DEFEITO RELATADO</p>
+     <p id="os-delivery-receipt-issue" style="margin:0 0 18px; font-size:13px; color:#4b4227; line-height:1.5;"></p>
+     <p id="os-delivery-receipt-report-label" style="margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.05em; color:#9c9072;">SERVIÇO REALIZADO / PEÇAS TROCADAS</p>
+     <p id="os-delivery-receipt-report" style="margin:0 0 20px; font-size:13px; color:#4b4227; line-height:1.5;"></p>
+     <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:18px;">
+      <tr><td style="padding:6px 0; color:#786d55;">Peças</td><td id="os-delivery-receipt-parts" style="padding:6px 0; text-align:right; font-family:'Space Mono',monospace;"></td></tr>
+      <tr><td style="padding:6px 0; color:#786d55;">Mão de obra</td><td id="os-delivery-receipt-labor" style="padding:6px 0; text-align:right; font-family:'Space Mono',monospace;"></td></tr>
+      <tr style="border-top:2px solid #eadfbe;"><td style="padding:12px 0 0; font-weight:700; font-size:16px;">Total pago</td><td id="os-delivery-receipt-total" style="padding:12px 0 0; text-align:right; font-weight:700; font-size:18px; font-family:'Space Mono',monospace;"></td></tr>
+     </table>
+     <div style="background:#f7f0da; border-radius:12px; padding:14px 18px; margin-bottom:18px;">
+      <p id="os-delivery-receipt-payment" style="margin:0; font-weight:700; font-size:14px; color:#6e5522;"></p>
+     </div>
+     <p style="margin:0; font-size:11px; color:#9c9072; line-height:1.5; border-top:1px solid #eadfbe; padding-top:14px;">
+      A garantia cobre exclusivamente o serviço e as peças descritas acima, não cobrindo mau uso, queda, contato com líquido ou novos defeitos.
      </p>
     </div>
     <div style="border-top:1px solid #eadfbe; padding:22px 36px; display:flex; justify-content:space-between; align-items:center;">
@@ -785,12 +915,35 @@
     </form>
    </section>
   </div>
+  <template id="vender-category-template">
+   <button type="button" class="vender-category-tile rounded-2xl overflow-hidden border border-[#e3d7b5] bg-white text-left hover:border-[#f4d35e] hover:shadow-md transition">
+    <div class="vender-category-icon-wrap h-20 flex items-center justify-center">
+     <i class="vender-category-icon w-8 h-8"></i>
+    </div>
+    <p class="vender-category-name px-3 py-2.5 font-bold text-sm text-[#211b0f] border-t border-[#f0e8d2]"></p>
+   </button>
+  </template>
+
+  <template id="vender-product-template">
+   <button type="button" class="vender-product-tile rounded-2xl overflow-hidden border border-[#e3d7b5] bg-white text-left hover:border-[#f4d35e] hover:shadow-md transition disabled:opacity-40 disabled:cursor-not-allowed">
+    <div class="vender-product-image w-full aspect-square bg-[#fff4c7] overflow-hidden flex items-center justify-center"></div>
+    <div class="p-3">
+     <p class="vender-product-name font-bold text-sm text-[#211b0f] leading-snug"></p>
+     <p class="vender-product-price mono font-bold text-[#b88718] mt-1"></p>
+     <p class="vender-product-stock text-[10px] mt-0.5"></p>
+    </div>
+   </button>
+  </template>
+
   <template id="store-product-template">
    <article class="product-card rounded-2xl overflow-hidden bg-white border border-[#e3d7b5] flex flex-col">
-    <div class="h-40 relative bg-gradient-to-br from-[#17140b] to-[#49370a] flex items-center justify-center overflow-hidden">
-     <img class="product-photo hidden absolute inset-0 w-full h-full object-cover" alt="">
+    <div class="product-image-wrap h-40 relative bg-gradient-to-br from-[#17140b] to-[#49370a] flex items-center justify-center overflow-hidden">
+     <img class="product-photo hidden absolute inset-0 w-full h-full object-cover cursor-zoom-in" alt="">
      <i data-lucide="smartphone" class="product-icon w-16 h-16 text-[#f4d35e]"></i>
      <span class="product-category absolute top-3 left-3 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold text-[#fff1a8] backdrop-blur"></span>
+     <span class="product-zoom-hint hidden absolute bottom-3 right-3 rounded-full bg-black/60 p-2 pointer-events-none">
+      <i data-lucide="zoom-in" class="w-4 h-4 text-white"></i>
+     </span>
     </div>
     <div class="p-5 flex flex-col flex-1">
      <h3 class="product-name font-bold text-lg leading-tight text-[#211b0f]"></h3>
@@ -845,9 +998,10 @@
      <div class="text-right">
       <p class="mono text-[10px] text-[#9c9072]">COMISSÃO ACUMULADA</p>
       <p class="equipe-total mono text-lg font-bold text-[#211b0f]"></p>
+      <p class="equipe-since text-[11px] text-[#9c9072]"></p>
      </div>
     </div>
-    <div class="grid sm:grid-cols-3 gap-3 items-end">
+    <div class="grid sm:grid-cols-4 gap-3 items-end">
      <div><label class="block font-bold mb-1 text-xs text-[#786d55]">Tipo de comissão</label>
       <select class="equipe-commission-type w-full rounded-xl border border-[#d5c9a8] bg-white px-3 py-2.5 text-sm">
        <option value="nenhuma">Sem comissão</option>
@@ -856,9 +1010,27 @@
       </select></div>
      <div><label class="block font-bold mb-1 text-xs text-[#786d55]">Valor</label>
       <input type="number" min="0" step="0.01" class="equipe-commission-value w-full rounded-xl border border-[#d5c9a8] bg-white px-3 py-2.5 text-sm"></div>
+     <div><label class="block font-bold mb-1 text-xs text-[#786d55]">Fechamento automático</label>
+      <select class="equipe-commission-period w-full rounded-xl border border-[#d5c9a8] bg-white px-3 py-2.5 text-sm">
+       <option value="manual">Só manual</option>
+       <option value="semanal">Semanal (toda segunda)</option>
+       <option value="mensal">Mensal (todo dia 1)</option>
+      </select></div>
      <button type="button" class="equipe-save-button rounded-xl px-4 py-2.5 font-bold border border-[#d5c9a8] text-[#211b0f] hover:bg-[#f5eedb]">Salvar</button>
     </div>
+    <div class="mt-4 pt-4 border-t border-[#f0e8d2] flex flex-wrap items-center justify-between gap-3">
+     <button type="button" class="equipe-close-button text-sm font-bold text-[#b88718] hover:underline">Fechar comissão agora (marcar como paga)</button>
+     <button type="button" class="equipe-history-toggle text-sm font-bold text-[#786d55] hover:underline">Ver histórico de fechamentos</button>
+    </div>
+    <div class="equipe-history hidden mt-3 space-y-2"></div>
    </article>
+  </template>
+
+  <template id="equipe-history-row-template">
+   <div class="flex items-center justify-between rounded-lg bg-[#fbf6e6] px-3 py-2 text-xs">
+    <span class="equipe-history-date text-[#786d55]"></span>
+    <span class="equipe-history-amount mono font-bold text-[#211b0f]"></span>
+   </div>
   </template>
 
   <template id="sale-history-template">
@@ -923,6 +1095,7 @@
     const salesCollection = db.collection("sales");
     const cashSessionsCollection = db.collection("cash_sessions");
     const serviceOrdersCollection = db.collection("service_orders");
+    const commissionPayoutsCollection = db.collection("commission_payouts");
 
     // Camada que substitui o "window.dataSdk" do Canva, usando o Firestore.
     // O custo fica separado em uma subcoleção "private" — as regras do Firestore
@@ -982,10 +1155,13 @@
     let currentUserName = "";
     let currentCommissionType = "nenhuma";
     let currentCommissionValue = 0;
+    let currentCommissionSince = null;
     let salesData = [];
     let unsubscribeSales = null;
     let rolesData = [];
     let unsubscribeRoles = null;
+    let commissionPayoutsData = [];
+    let unsubscribeCommissionPayouts = null;
     let saleToCancel = null;
     let cart = [];
     let currentCashSession = null;
@@ -1036,18 +1212,34 @@
       el("subview-" + subview).scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
+    function openImageLightbox(url) {
+      el("image-lightbox-photo").src = url;
+      el("image-lightbox-modal").classList.remove("hidden");
+      el("image-lightbox-modal").classList.add("flex");
+    }
+
+    function closeImageLightbox() {
+      el("image-lightbox-modal").classList.add("hidden");
+      el("image-lightbox-modal").classList.remove("flex");
+      el("image-lightbox-photo").src = "";
+    }
+
     function productImage(article, url) {
       const photo = article.querySelector(".product-photo");
       const icon = article.querySelector(".product-icon");
+      const zoomHint = article.querySelector(".product-zoom-hint");
 
       if (url && /^https:\/\//.test(url)) {
         photo.src = url;
         photo.alt = "Imagem do produto";
         photo.classList.remove("hidden");
         icon.classList.add("hidden");
+        if (zoomHint) zoomHint.classList.remove("hidden");
+        photo.onclick = () => openImageLightbox(url);
         photo.onerror = () => {
           photo.classList.add("hidden");
           icon.classList.remove("hidden");
+          if (zoomHint) zoomHint.classList.add("hidden");
         };
       }
     }
@@ -1128,6 +1320,157 @@
       lucide.createIcons();
     }
 
+    // ====== VENDER (PDV por categoria) ======
+    const VENDER_CATEGORIES = [
+      { name: "Celulares", icon: "smartphone" },
+      { name: "Acessórios", icon: "package" },
+      { name: "Assistência técnica", icon: "wrench" },
+      { name: "Cabos USB", icon: "usb" },
+      { name: "Carregadores", icon: "battery-charging" },
+      { name: "Película", icon: "shield" },
+      { name: "Telas", icon: "monitor-smartphone" },
+      { name: "Dock", icon: "plug" },
+      { name: "Baterias", icon: "battery" },
+      { name: "Câmeras", icon: "camera" },
+      { name: "Fonte", icon: "zap" },
+      { name: "Controles", icon: "gamepad-2" },
+      { name: "Caixa de Som", icon: "speaker" }
+    ];
+    const VENDER_TILE_COLORS = ["#fdf3d1", "#f3e6c9", "#fbeccb", "#f6ead2", "#fdeecb"];
+    let venderActiveCategory = null;
+
+    function renderVenderCategories() {
+      const grid = el("vender-category-grid");
+      if (!grid) return;
+      grid.replaceChildren();
+      VENDER_CATEGORIES.forEach((cat, index) => {
+        const fragment = el("vender-category-template").content.cloneNode(true);
+        const tile = fragment.querySelector(".vender-category-tile");
+        const iconWrap = fragment.querySelector(".vender-category-icon-wrap");
+        const icon = fragment.querySelector(".vender-category-icon");
+        iconWrap.style.backgroundColor = VENDER_TILE_COLORS[index % VENDER_TILE_COLORS.length];
+        icon.setAttribute("data-lucide", cat.icon);
+        icon.classList.add("text-[#8b6515]");
+        fragment.querySelector(".vender-category-name").textContent = cat.name;
+        tile.addEventListener("click", () => openVenderCategory(cat.name));
+        grid.appendChild(fragment);
+      });
+      lucide.createIcons();
+    }
+
+    function openVenderCategory(categoryName) {
+      venderActiveCategory = categoryName;
+      el("vender-categories-panel").classList.add("hidden");
+      el("vender-products-panel").classList.remove("hidden");
+      el("vender-products-title").textContent = categoryName;
+      renderVenderProducts();
+    }
+
+    function closeVenderCategory() {
+      venderActiveCategory = null;
+      el("vender-products-panel").classList.add("hidden");
+      el("vender-categories-panel").classList.remove("hidden");
+    }
+
+    function buildVenderProductTile(product) {
+      const fragment = el("vender-product-template").content.cloneNode(true);
+      const tile = fragment.querySelector(".vender-product-tile");
+      const imageBox = fragment.querySelector(".vender-product-image");
+
+      if (product.image_url && /^https:\/\//.test(product.image_url)) {
+        const img = document.createElement("img");
+        img.src = product.image_url;
+        img.alt = product.name;
+        img.className = "w-full h-full object-cover";
+        img.onerror = () => {
+          imageBox.innerHTML = "";
+          const fallback = document.createElement("i");
+          fallback.setAttribute("data-lucide", "package");
+          fallback.className = "w-8 h-8 text-[#b88718]";
+          imageBox.appendChild(fallback);
+          lucide.createIcons();
+        };
+        imageBox.appendChild(img);
+      } else {
+        imageBox.innerHTML = "<i data-lucide=\"package\" class=\"w-8 h-8 text-[#b88718]\"></i>";
+      }
+
+      fragment.querySelector(".vender-product-name").textContent = product.name;
+      fragment.querySelector(".vender-product-price").textContent = money(product.price);
+
+      const stockEl = fragment.querySelector(".vender-product-stock");
+      const available = Number(product.stock) > 0;
+      stockEl.textContent = available ? Number(product.stock) + " em estoque" : "Sem estoque";
+      stockEl.className = "vender-product-stock text-[10px] mt-0.5 " + (available ? "text-emerald-700 font-bold" : "text-red-600 font-bold");
+
+      tile.disabled = !available;
+      tile.addEventListener("click", () => addToCartFromVender(product));
+
+      return fragment;
+    }
+
+    function renderVenderProductGrid(containerId, emptyId, list) {
+      const grid = el(containerId);
+      grid.replaceChildren();
+      list.forEach(product => grid.appendChild(buildVenderProductTile(product)));
+      if (emptyId) el(emptyId).classList.toggle("hidden", list.length !== 0);
+      lucide.createIcons();
+    }
+
+    function renderVenderProducts() {
+      if (!venderActiveCategory) return;
+      const list = products.filter(product => product.status !== "inativo" && product.category === venderActiveCategory);
+      renderVenderProductGrid("vender-products-grid", "vender-products-empty", list);
+    }
+
+    function renderVenderSearch() {
+      const searchInput = el("vender-search");
+      const resultsBox = el("vender-search-results");
+      const categoryGrid = el("vender-category-grid");
+      if (!searchInput) return;
+      const query = searchInput.value.toLowerCase().trim();
+
+      if (!query) {
+        resultsBox.classList.add("hidden");
+        categoryGrid.classList.remove("hidden");
+        return;
+      }
+
+      categoryGrid.classList.add("hidden");
+      resultsBox.classList.remove("hidden");
+      const list = products.filter(product => product.status !== "inativo" && product.name.toLowerCase().includes(query));
+      renderVenderProductGrid("vender-search-results", null, list);
+    }
+
+    function addToCartFromVender(product) {
+      if (Number(product.stock) < 1) return;
+      const alreadyInCart = cart.filter(item => item.product_id === product.__backendId).reduce((sum, item) => sum + item.quantity, 0);
+      if (alreadyInCart >= Number(product.stock)) {
+        toast("Esse produto já está no carrinho com todo o estoque disponível.");
+        return;
+      }
+      addToCart(product, 1);
+      toast(product.name + " adicionado ao carrinho.");
+    }
+
+    function renderVenderCartBar() {
+      const bar = el("vender-cart-bar");
+      if (!bar) return;
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      bar.classList.toggle("hidden", count === 0);
+      el("vender-cart-count").textContent = count + (count === 1 ? " item" : " itens");
+      el("vender-cart-total").textContent = money(cartTotal());
+    }
+
+    function renderVender() {
+      renderVenderCategories();
+      if (venderActiveCategory) {
+        renderVenderProducts();
+      }
+      renderVenderSearch();
+      renderVenderCartBar();
+    }
+
     function renderAdmin() {
       const list = el("admin-products");
       list.replaceChildren();
@@ -1178,6 +1521,7 @@
     function renderAll() {
       renderStore();
       renderAdmin();
+      renderVender();
     }
 
     async function refreshProducts(data) {
@@ -1268,6 +1612,7 @@
           salesData = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
           renderSalesHistory();
           renderEquipe();
+          renderCashierLiveSummary();
         },
         () => {}
       );
@@ -1282,9 +1627,12 @@
       renderSalesHistory();
     }
 
-    function computeCommissionForSeller(uid, type, value) {
+    function computeCommissionForSeller(uid, type, value, sinceIso) {
       const numValue = Number(value) || 0;
-      const sellerSales = salesData.filter(sale => sale.seller_uid === uid && sale.status !== "cancelada");
+      let sellerSales = salesData.filter(sale => sale.seller_uid === uid && sale.status !== "cancelada");
+      if (sinceIso) {
+        sellerSales = sellerSales.filter(sale => sale.created_at > sinceIso);
+      }
       if (type === "percentual") {
         const total = sellerSales.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0);
         return total * (numValue / 100);
@@ -1295,11 +1643,58 @@
       return 0;
     }
 
+    async function closeCommissionForPerson(person, periodLabel) {
+      const type = person.commission_type || "nenhuma";
+      const value = person.commission_value || 0;
+      const sinceIso = person.last_commission_closed_at || null;
+      const amount = computeCommissionForSeller(person.__backendId, type, value, sinceIso);
+      const nowIso = new Date().toISOString();
+
+      await commissionPayoutsCollection.add({
+        seller_uid: person.__backendId,
+        seller_name: person.name || "",
+        amount: amount,
+        commission_type: type,
+        commission_value: value,
+        period_label: periodLabel,
+        period_start: sinceIso,
+        closed_at: nowIso,
+        closed_by_uid: auth.currentUser.uid,
+        closed_by_name: currentUserName
+      });
+
+      await rolesCollection.doc(person.__backendId).update({
+        last_commission_closed_at: nowIso
+      });
+    }
+
+    function checkAutoCommissionClosures() {
+      if (!isAdmin()) return;
+      const now = new Date();
+      const todayKey = now.toISOString().slice(0, 10);
+      const isMonday = now.getDay() === 1;
+      const isFirstOfMonth = now.getDate() === 1;
+
+      rolesData.forEach(person => {
+        const period = person.commission_period || "manual";
+        if (period === "manual") return;
+
+        const lastClosedKey = person.last_commission_closed_at ? person.last_commission_closed_at.slice(0, 10) : null;
+
+        if (period === "semanal" && isMonday && lastClosedKey !== todayKey) {
+          closeCommissionForPerson(person, "Fechamento semanal automático").catch(() => {});
+        } else if (period === "mensal" && isFirstOfMonth && lastClosedKey !== todayKey) {
+          closeCommissionForPerson(person, "Fechamento mensal automático").catch(() => {});
+        }
+      });
+    }
+
     function startRolesListener() {
       if (unsubscribeRoles || !isAdmin()) return;
       unsubscribeRoles = rolesCollection.onSnapshot(
         snapshot => {
           rolesData = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
+          checkAutoCommissionClosures();
           renderEquipe();
         },
         () => {}
@@ -1312,6 +1707,29 @@
         unsubscribeRoles = null;
       }
       rolesData = [];
+    }
+
+    function startCommissionPayoutsListener() {
+      if (unsubscribeCommissionPayouts || !auth.currentUser) return;
+      const query = isAdmin()
+        ? commissionPayoutsCollection.orderBy("closed_at", "desc").limit(200)
+        : commissionPayoutsCollection.where("seller_uid", "==", auth.currentUser.uid).limit(50);
+      unsubscribeCommissionPayouts = query.onSnapshot(
+        snapshot => {
+          commissionPayoutsData = snapshot.docs.map(doc => ({ __backendId: doc.id, ...doc.data() }));
+          commissionPayoutsData.sort((a, b) => (b.closed_at || "").localeCompare(a.closed_at || ""));
+          renderEquipe();
+        },
+        () => {}
+      );
+    }
+
+    function stopCommissionPayoutsListener() {
+      if (unsubscribeCommissionPayouts) {
+        unsubscribeCommissionPayouts();
+        unsubscribeCommissionPayouts = null;
+      }
+      commissionPayoutsData = [];
     }
 
     function renderEquipe() {
@@ -1337,25 +1755,61 @@
 
           const typeSelect = article.querySelector(".equipe-commission-type");
           const valueInput = article.querySelector(".equipe-commission-value");
+          const periodSelect = article.querySelector(".equipe-commission-period");
           const totalLabel = article.querySelector(".equipe-total");
+          const sinceLabel = article.querySelector(".equipe-since");
 
           const personType = person.commission_type || "nenhuma";
           const personValue = person.commission_value || 0;
+          const personPeriod = person.commission_period || "manual";
+          const sinceIso = person.last_commission_closed_at || null;
+
           typeSelect.value = personType;
           valueInput.value = personValue;
-          totalLabel.textContent = money(computeCommissionForSeller(person.__backendId, personType, personValue));
+          periodSelect.value = personPeriod;
+          totalLabel.textContent = money(computeCommissionForSeller(person.__backendId, personType, personValue, sinceIso));
+          sinceLabel.textContent = sinceIso ? "desde " + new Date(sinceIso).toLocaleDateString("pt-BR") : "desde o início";
 
           article.querySelector(".equipe-save-button").addEventListener("click", async () => {
             try {
               await rolesCollection.doc(person.__backendId).update({
                 commission_type: typeSelect.value,
-                commission_value: Number(valueInput.value) || 0
+                commission_value: Number(valueInput.value) || 0,
+                commission_period: periodSelect.value
               });
               toast("Comissão atualizada.");
             } catch (e) {
               toast("Não foi possível salvar a comissão.");
             }
           });
+
+          article.querySelector(".equipe-close-button").addEventListener("click", async () => {
+            const currentAmount = computeCommissionForSeller(person.__backendId, personType, personValue, sinceIso);
+            if (!confirm("Fechar a comissão de " + (person.name || "este funcionário") + " (" + money(currentAmount) + ") e zerar o contador?")) return;
+            try {
+              await closeCommissionForPerson(person, "Fechamento manual");
+              toast("Comissão fechada e registrada no histórico.");
+            } catch (e) {
+              toast("Não foi possível fechar a comissão.");
+            }
+          });
+
+          const historyBox = article.querySelector(".equipe-history");
+          article.querySelector(".equipe-history-toggle").addEventListener("click", () => {
+            historyBox.classList.toggle("hidden");
+          });
+          const personPayouts = commissionPayoutsData.filter(payout => payout.seller_uid === person.__backendId);
+          if (personPayouts.length === 0) {
+            historyBox.innerHTML = "<p class='text-xs text-[#9c9072]'>Nenhum fechamento registrado ainda.</p>";
+          } else {
+            historyBox.replaceChildren();
+            personPayouts.forEach(payout => {
+              const row = el("equipe-history-row-template").content.cloneNode(true);
+              row.querySelector(".equipe-history-date").textContent = new Date(payout.closed_at).toLocaleDateString("pt-BR") + " · " + (payout.period_label || "");
+              row.querySelector(".equipe-history-amount").textContent = money(payout.amount);
+              historyBox.appendChild(row);
+            });
+          }
 
           list.appendChild(fragment);
         });
@@ -1365,6 +1819,7 @@
       } else if (auth.currentUser) {
         const ruleLabel = el("my-commission-rule");
         const totalLabel = el("my-commission-total");
+        const sinceLabel = el("my-commission-since");
         if (currentCommissionType === "percentual") {
           ruleLabel.textContent = "Sua regra: " + currentCommissionValue + "% sobre o total das suas vendas.";
         } else if (currentCommissionType === "fixo_por_venda") {
@@ -1372,7 +1827,19 @@
         } else {
           ruleLabel.textContent = "Nenhuma regra de comissão configurada ainda. Fale com seu gerente.";
         }
-        totalLabel.textContent = money(computeCommissionForSeller(auth.currentUser.uid, currentCommissionType, currentCommissionValue));
+        totalLabel.textContent = money(computeCommissionForSeller(auth.currentUser.uid, currentCommissionType, currentCommissionValue, currentCommissionSince));
+        sinceLabel.textContent = currentCommissionSince ? "Acumulado desde " + new Date(currentCommissionSince).toLocaleDateString("pt-BR") : "Comissão acumulada desde o início";
+
+        const historyList = el("my-commission-history");
+        const myPayouts = commissionPayoutsData.filter(payout => payout.seller_uid === auth.currentUser.uid);
+        el("my-commission-history-empty").classList.toggle("hidden", myPayouts.length !== 0);
+        historyList.replaceChildren();
+        myPayouts.forEach(payout => {
+          const row = el("equipe-history-row-template").content.cloneNode(true);
+          row.querySelector(".equipe-history-date").textContent = new Date(payout.closed_at).toLocaleDateString("pt-BR") + " · " + (payout.period_label || "");
+          row.querySelector(".equipe-history-amount").textContent = money(payout.amount);
+          historyList.appendChild(row);
+        });
       }
     }
 
@@ -1487,6 +1954,7 @@
       } else {
         badge.classList.add("hidden");
       }
+      renderVenderCartBar();
     }
 
     function renderCart() {
@@ -1600,6 +2068,34 @@
     }
 
     // ====== CAIXA (abertura / fechamento / conferência) ======
+    function computeSessionBreakdown(sessionId) {
+      const sessionSales = salesData.filter(sale =>
+        sale.cash_session_id === sessionId && sale.status !== "cancelada"
+      );
+      const breakdown = { dinheiro: 0, pix: 0, credito: 0, debito: 0 };
+      sessionSales.forEach(sale => {
+        const method = sale.payment_method;
+        if (breakdown.hasOwnProperty(method)) breakdown[method] += Number(sale.total || 0);
+      });
+      const total = breakdown.dinheiro + breakdown.pix + breakdown.credito + breakdown.debito;
+      return { breakdown, total, count: sessionSales.length };
+    }
+
+    function renderCashierLiveSummary() {
+      const card = el("cashier-live-summary");
+      const isOpen = currentCashSession && currentCashSession.status === "aberto";
+      card.classList.toggle("hidden", !isOpen);
+      if (!isOpen) return;
+
+      const { breakdown, total, count } = computeSessionBreakdown(currentCashSession.__backendId);
+      el("cashier-live-dinheiro").textContent = money(breakdown.dinheiro);
+      el("cashier-live-pix").textContent = money(breakdown.pix);
+      el("cashier-live-credito").textContent = money(breakdown.credito);
+      el("cashier-live-debito").textContent = money(breakdown.debito);
+      el("cashier-live-count").textContent = count;
+      el("cashier-live-total").textContent = money(total);
+    }
+
     function renderCashierStatus() {
       const textEl = el("cashier-status-text");
       const openBtn = el("open-cashier-button");
@@ -1615,6 +2111,7 @@
         openBtn.classList.remove("hidden");
         closeBtn.classList.add("hidden");
       }
+      renderCashierLiveSummary();
     }
 
     function renderCashierHistory() {
@@ -1643,6 +2140,30 @@
           diffEl.className = "cashier-history-diff mono text-sm font-bold " + (session.difference < 0 ? "text-red-600" : "text-emerald-700");
         } else {
           diffEl.textContent = "—";
+        }
+
+        const breakdownEl = row.querySelector(".cashier-history-breakdown");
+        if (session.payment_breakdown) {
+          const chips = [
+            ["Dinheiro", session.payment_breakdown.dinheiro],
+            ["Pix", session.payment_breakdown.pix],
+            ["Crédito", session.payment_breakdown.credito],
+            ["Débito", session.payment_breakdown.debito]
+          ].filter(([, value]) => value > 0);
+          chips.forEach(([label, value]) => {
+            const chip = document.createElement("span");
+            chip.className = "mono text-xs rounded-full bg-[#f7f0da] px-3 py-1 text-[#6e5522] font-bold";
+            chip.textContent = label + ": " + money(value);
+            breakdownEl.appendChild(chip);
+          });
+          if (session.sales_count != null) {
+            const countChip = document.createElement("span");
+            countChip.className = "text-xs px-3 py-1 text-[#9c9072]";
+            countChip.textContent = session.sales_count + " venda(s) · Total " + money(session.total_revenue);
+            breakdownEl.appendChild(countChip);
+          }
+        } else {
+          breakdownEl.remove();
         }
 
         list.appendChild(fragment);
@@ -1711,6 +2232,21 @@
     function openCloseCashierModal() {
       const expected = computeExpectedCash();
       el("close-cashier-summary").textContent = "Valor esperado em dinheiro: " + money(expected);
+
+      const { breakdown, total, count } = computeSessionBreakdown(currentCashSession.__backendId);
+      const breakdownEl = el("close-cashier-breakdown");
+      breakdownEl.replaceChildren();
+      [["Dinheiro", breakdown.dinheiro], ["Pix", breakdown.pix], ["Cartão de Crédito", breakdown.credito], ["Cartão de Débito", breakdown.debito]].forEach(([label, value]) => {
+        const row = document.createElement("div");
+        row.className = "flex items-center justify-between";
+        row.innerHTML = "<span class='text-[#786d55]'>" + label + "</span><span class='mono font-bold text-[#211b0f]'>" + money(value) + "</span>";
+        breakdownEl.appendChild(row);
+      });
+      const totalRow = document.createElement("div");
+      totalRow.className = "flex items-center justify-between pt-1.5 mt-1.5 border-t border-[#e3d7b5] font-bold";
+      totalRow.innerHTML = "<span class='text-[#211b0f]'>Total (" + count + " vendas)</span><span class='mono text-[#211b0f]'>" + money(total) + "</span>";
+      breakdownEl.appendChild(totalRow);
+
       el("counted-amount").value = "";
       el("close-cashier-difference").textContent = "";
       el("close-cashier-modal").dataset.expected = expected;
@@ -1726,6 +2262,7 @@
     async function closeCashier(countedAmount) {
       const expected = Number(el("close-cashier-modal").dataset.expected || 0);
       const difference = countedAmount - expected;
+      const { breakdown, total, count } = computeSessionBreakdown(currentCashSession.__backendId);
       await cashSessionsCollection.doc(currentCashSession.__backendId).update({
         status: "fechado",
         closed_at: new Date().toISOString(),
@@ -1733,7 +2270,10 @@
         closed_by_name: currentUserName,
         counted_amount: countedAmount,
         expected_cash: expected,
-        difference: difference
+        difference: difference,
+        payment_breakdown: breakdown,
+        total_revenue: total,
+        sales_count: count
       });
     }
 
@@ -1971,6 +2511,51 @@
       lucide.createIcons();
     }
 
+    async function generateOSDeliveryReceipt(os, paymentMethod, total) {
+      const partsValue = Number(os.parts_value || 0);
+      const laborValue = Number(os.labor_value || 0);
+
+      el("os-delivery-receipt-number").textContent = osNumberLabel(os);
+      el("os-delivery-receipt-date").textContent = new Date().toLocaleString("pt-BR");
+      el("os-delivery-receipt-customer").textContent = os.customer_name;
+      el("os-delivery-receipt-phone").textContent = os.customer_phone;
+      el("os-delivery-receipt-device").textContent = os.device_brand + " " + os.device_model + (os.device_color ? " - " + os.device_color : "");
+      el("os-delivery-receipt-warranty").textContent = Number(os.warranty_days) > 0 ? os.warranty_days + " dias (a partir de hoje)" : "Sem garantia";
+      el("os-delivery-receipt-issue").textContent = os.reported_issue || "—";
+
+      const reportEl = el("os-delivery-receipt-report");
+      const reportLabelEl = el("os-delivery-receipt-report-label");
+      if (os.technical_report) {
+        reportEl.textContent = os.technical_report;
+        reportLabelEl.style.display = "";
+        reportEl.style.display = "";
+      } else {
+        reportLabelEl.style.display = "none";
+        reportEl.style.display = "none";
+      }
+
+      el("os-delivery-receipt-parts").textContent = money(partsValue);
+      el("os-delivery-receipt-labor").textContent = money(laborValue);
+      el("os-delivery-receipt-total").textContent = money(total);
+      el("os-delivery-receipt-payment").textContent = "Pago à vista — " + paymentLabel(paymentMethod);
+
+      const template = el("os-delivery-receipt-template");
+      const canvas = await html2canvas(template, { scale: 2, backgroundColor: "#fffdf5" });
+
+      receiptCanvas = canvas;
+      el("receipt-preview-img").src = canvas.toDataURL("image/png");
+      el("receipt-result-modal").classList.remove("hidden");
+      el("receipt-result-modal").classList.add("flex");
+
+      const shareButton = el("receipt-share-button");
+      if (navigator.canShare && navigator.share) {
+        shareButton.classList.remove("hidden");
+      } else {
+        shareButton.classList.add("hidden");
+      }
+      lucide.createIcons();
+    }
+
     function openFinalizeOS(os) {
       if (!currentCashSession || currentCashSession.status !== "aberto") {
         toast("Abra o caixa antes de finalizar uma OS.");
@@ -1995,6 +2580,7 @@
       const total = Number(osToFinalize.parts_value || 0) + Number(osToFinalize.labor_value || 0);
       const confirmButton = el("confirm-finalize-os");
       confirmButton.disabled = true;
+      const finalizedOS = osToFinalize;
 
       try {
         const items = [{
@@ -2027,7 +2613,7 @@
 
         closeFinalizeOS();
         toast("OS finalizada e cobrada!");
-        await generateReceipt(items, total, paymentMethod);
+        await generateOSDeliveryReceipt(finalizedOS, paymentMethod, total);
       } catch (e) {
         toast("Não foi possível finalizar a OS.");
       } finally {
@@ -2106,10 +2692,12 @@
             currentUserName = roleSnap.data().name || auth.currentUser.email;
             currentCommissionType = roleSnap.data().commission_type || "nenhuma";
             currentCommissionValue = roleSnap.data().commission_value || 0;
+            currentCommissionSince = roleSnap.data().last_commission_closed_at || null;
             startSalesListener();
             startCashierListener();
             startOSListener();
             startRolesListener();
+            startCommissionPayoutsListener();
             renderEquipe();
             await refreshProducts(rawProducts);
             callback();
@@ -2214,6 +2802,7 @@
           currentUserName = roleSnap.data().name || email;
           currentCommissionType = roleSnap.data().commission_type || "nenhuma";
           currentCommissionValue = roleSnap.data().commission_value || 0;
+          currentCommissionSince = roleSnap.data().last_commission_closed_at || null;
 
           el("auth-modal").classList.add("hidden");
           el("auth-password").value = "";
@@ -2223,6 +2812,7 @@
           startCashierListener();
           startOSListener();
           startRolesListener();
+          startCommissionPayoutsListener();
           renderEquipe();
           await refreshProducts(rawProducts);
 
@@ -2246,12 +2836,14 @@
         currentUserName = "";
         currentCommissionType = "nenhuma";
         currentCommissionValue = 0;
+        currentCommissionSince = null;
         cart = [];
         renderCartBadge();
         stopSalesListener();
         stopCashierListener();
         stopOSListener();
         stopRolesListener();
+        stopCommissionPayoutsListener();
         await refreshProducts(rawProducts);
         setView("store");
         toast("Sessão encerrada.");
@@ -2297,6 +2889,13 @@
       el("hero-whatsapp").addEventListener("click", () => openWhatsApp("Olá, Galego Cell! Gostaria de falar com um especialista."));
       el("product-search").addEventListener("input", renderStore);
       el("category-filter").addEventListener("change", renderStore);
+      el("image-lightbox-close").addEventListener("click", closeImageLightbox);
+      el("image-lightbox-modal").addEventListener("click", event => {
+        if (event.target.id === "image-lightbox-modal") closeImageLightbox();
+      });
+      el("vender-search").addEventListener("input", renderVenderSearch);
+      el("vender-back-button").addEventListener("click", closeVenderCategory);
+      el("vender-cart-button").addEventListener("click", openCartModal);
       el("admin-product-search").addEventListener("input", renderAdmin);
       document.querySelectorAll("[data-subview]").forEach(button => {
         button.addEventListener("click", () => setAdminSubview(button.dataset.subview));
