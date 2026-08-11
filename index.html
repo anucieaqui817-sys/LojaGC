@@ -812,9 +812,7 @@
      <p id="os-delivery-receipt-report-label" style="margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.05em; color:#9c9072;">SERVIÇO REALIZADO / PEÇAS TROCADAS</p>
      <p id="os-delivery-receipt-report" style="margin:0 0 20px; font-size:13px; color:#4b4227; line-height:1.5;"></p>
      <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:18px;">
-      <tr><td style="padding:6px 0; color:#786d55;">Peças</td><td id="os-delivery-receipt-parts" style="padding:6px 0; text-align:right; font-family:'Space Mono',monospace;"></td></tr>
-      <tr><td style="padding:6px 0; color:#786d55;">Mão de obra</td><td id="os-delivery-receipt-labor" style="padding:6px 0; text-align:right; font-family:'Space Mono',monospace;"></td></tr>
-      <tr style="border-top:2px solid #eadfbe;"><td style="padding:12px 0 0; font-weight:700; font-size:16px;">Total pago</td><td id="os-delivery-receipt-total" style="padding:12px 0 0; text-align:right; font-weight:700; font-size:18px; font-family:'Space Mono',monospace;"></td></tr>
+      <tr><td style="padding:10px 0; font-weight:700; font-size:16px;">Valor do serviço</td><td id="os-delivery-receipt-total" style="padding:10px 0; text-align:right; font-weight:700; font-size:20px; font-family:'Space Mono',monospace; color:#8b6515;"></td></tr>
      </table>
      <div style="background:#f7f0da; border-radius:12px; padding:14px 18px; margin-bottom:18px;">
       <p id="os-delivery-receipt-payment" style="margin:0; font-weight:700; font-size:14px; color:#6e5522;"></p>
@@ -2416,6 +2414,16 @@
         }
 
         if (os.status === "entregue") {
+          const receiptBtn = document.createElement("button");
+          receiptBtn.type = "button";
+          receiptBtn.className = "rounded-lg px-3 py-2 text-xs font-bold border border-[#d5c9a8] text-[#211b0f]";
+          receiptBtn.textContent = "Comprovante de Pagamento";
+          receiptBtn.addEventListener("click", () => {
+            const total = Number(os.parts_value || 0) + Number(os.labor_value || 0);
+            generateOSDeliveryReceipt(os, os.payment_method || "dinheiro", total);
+          });
+          actions.appendChild(receiptBtn);
+
           const reopenBtn = document.createElement("button");
           reopenBtn.type = "button";
           reopenBtn.className = "rounded-lg px-3 py-2 text-xs font-bold border border-amber-300 text-amber-700";
@@ -2512,9 +2520,6 @@
     }
 
     async function generateOSDeliveryReceipt(os, paymentMethod, total) {
-      const partsValue = Number(os.parts_value || 0);
-      const laborValue = Number(os.labor_value || 0);
-
       el("os-delivery-receipt-number").textContent = osNumberLabel(os);
       el("os-delivery-receipt-date").textContent = new Date().toLocaleString("pt-BR");
       el("os-delivery-receipt-customer").textContent = os.customer_name;
@@ -2534,8 +2539,6 @@
         reportEl.style.display = "none";
       }
 
-      el("os-delivery-receipt-parts").textContent = money(partsValue);
-      el("os-delivery-receipt-labor").textContent = money(laborValue);
       el("os-delivery-receipt-total").textContent = money(total);
       el("os-delivery-receipt-payment").textContent = "Pago à vista — " + paymentLabel(paymentMethod);
 
@@ -2761,14 +2764,21 @@
           ? saleToCancel.items
           : [{ product_id: saleToCancel.product_id, quantity: saleToCancel.quantity }];
 
-        itemsToReverse.forEach(item => {
-          batch.set(sdb.collection("products").doc(item.product_id), {
-            stock: firebase.firestore.FieldValue.increment(Number(item.quantity)),
-            sold_quantity: firebase.firestore.FieldValue.increment(-Number(item.quantity))
-          }, { merge: true });
-        });
+        // Itens de OS (conserto) não têm produto de estoque vinculado —
+        // não há o que devolver, só a venda em si é marcada como cancelada.
+        itemsToReverse
+          .filter(item => item.product_id)
+          .forEach(item => {
+            batch.set(sdb.collection("products").doc(item.product_id), {
+              stock: firebase.firestore.FieldValue.increment(Number(item.quantity)),
+              sold_quantity: firebase.firestore.FieldValue.increment(-Number(item.quantity))
+            }, { merge: true });
+          });
 
         await batch.commit();
+      } catch (e) {
+        e.isCancelFailure = true;
+        throw e;
       } finally {
         await manager.app.auth().signOut().catch(() => {});
         await manager.app.delete().catch(() => {});
@@ -2863,7 +2873,9 @@
           toast("Venda cancelada e estoque restaurado.");
           closeCancelConfirm();
         } catch (e) {
-          errorEl.textContent = "E-mail/senha inválidos ou sem permissão de Dono/Gerente.";
+          errorEl.textContent = e.isCancelFailure
+            ? "Login confirmado, mas não foi possível cancelar essa venda. Tente novamente."
+            : "E-mail/senha inválidos ou sem permissão de Dono/Gerente.";
           errorEl.classList.remove("hidden");
         } finally {
           submitButton.disabled = false;
